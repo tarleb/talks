@@ -19,34 +19,35 @@ Textile, and TWiki.
 - Output formats ::
 Almost all input formats plus AsciiDoc, LaTeX ~beamer~, ConTeXt, DokuWiki,
 DZSlides, FB2, ICML, Groff man pages, PDF (via LaTeX), plain text, reveal.js,
-rtf, s5, Slideous, Slidy, TEI simple, TexInfo, ad ZimWiki.
+rtf, s5, Slideous, Slidy, TEI simple, TexInfo, and ZimWiki.
 
-** Why is it useful to academics?
-Pandoc offers
-- (near) free choice of input format,
+** What does it offer to academics?
+- Broad choice of input formats,
+- mathematical formulæ conversion,
+- citation support (Bibtex, Endnote, Zotero…),
 - creation of slides and handouts from the same document, and
-- citation support (Bibtex, Endnote, Zotero…).
+- flexibility combined with simplicity.
 
 ** Extensibility
-Write
-  - custom templates
-  - custom document writers in lua
+With Pandoc, one can write
+  - custom templates,
+  - custom document writers in lua, and
   - filters changing the document
     - read/write JSON
     - act on the document AST
-    - libraries available in many languages
+    - libraries available in many languages.
 
 ** Science software
 
 Used in or supported by
-  - RStudio
-  - Jupyter
-  - Authorea(?)
-  - your favorite editor
+  - your favorite editor :: probably has a Pandoc plugin
+  - RStudio :: IDE for R
+  - Jupyter :: notebook for python, julia, haskell…
+  - Authorea :: collaborative writing, publishing tool
 
 ** Outlook
 
-- Better document internal references
+- Document internal references
 - Execution of code snippets via filters
 - Reader for AsciiDoc
 - Floating tables
