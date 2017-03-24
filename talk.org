@@ -1,0 +1,199 @@
+#+TITLE: Functional Programming in PHP
+#+SUBTITLE: Write clean code or confuse everyone
+#+AUTHOR: Albert Krewinkel
+
+* Functional Programming
+
+** Generic properties
+
+- Pure functions (in the mathematical sense)
+- No global state
+- No /side effects/
+
+** Why should we care?
+
+Functional programming
+- simplifies some design patterns,
+- allows for straight-forward parallelization, and
+- makes it simple to reason about code.
+
+#+BEGIN_notes
+Strategy pattern
+#+END_notes
+
+** Strategy Pattern
+
+#+BEGIN_SRC php
+interface RequestHandler { handleRequest; }
+class DummyRequestHandler extends RequestHandler {…} 
+class HttpRequestHandler extends RequestHandler {…} 
+
+function handlePath($path, RequestHandler $handler) {…}
+handlePath("/app", new HttpRequestHandler());
+#+END_SRC
+
+#+BEGIN_notes
+Plays nicely with the open/closed principle of SOLID.
+#+END_notes
+
+
+* Functions in PHP
+
+** Assigning functions to variables
+
+#+BEGIN_SRC php
+$doubleInt = function (int x) {
+    return 2 * $double;
+}
+#+END_SRC
+
+** Using functions
+
+#+BEGIN_SRC php
+$doubled = array_map($doubleInt, [1, 2, 3, 4, 5]);
+// $doubled == [2, 4, 6, 8, 10]
+#+END_SRC
+
+** Anonymous functions
+
+#+BEGIN_SRC php
+$even = array_filter([1, 2, 3, 4], function (int $x) {
+    return ($x % 2 == 0)
+});
+// $even == [2, 4]
+#+END_SRC
+
+** Closures
+
+#+BEGIN_SRC php
+function createMultiplier(int $multiplier) {
+    return function ($x) use ($multiplier) {
+        return $x * $multiplier;
+    };
+}
+
+$triple = createMultiplier(3);
+[3, 6, 9] == array_map($triple, [1, 2, 3]);
+#+END_SRC
+
+** Callables
+
+#+BEGIN_SRC php
+class Foo
+{
+    static function frob(int $x)
+    {
+        return $x * 2;
+    }
+}
+$foo = new Foo();
+$bar1 = array_map([$foo, 'frob'],  [1, 2, 3, 4]);
+$bar2 = array_map(['Foo', 'frob'], [1, 2, 3, 4]);
+$bar3 = array_map(['Foo::frob'],   [1, 2, 3, 4]);
+#+END_SRC
+
+#+BEGIN_notes
+Second and third versions only work because ~frob~ is static.
+#+END_notes
+
+** Callable objects
+
+#+BEGIN_SRC php
+class Greeter {
+    private $msg;
+    function __construct($msg) { $this->msg = $msg; }
+    function __invoke() { echo $this->msg; }
+}
+
+$greeter = new Greeter("Hello, World!");
+call_user_func($greeter); // prints "Hello, World!"
+#+END_SRC
+
+
+* Working with functions in PHP
+
+** ~array_*~ functions
+
+#+BEGIN_SRC
+function array_map($fn, $arr) {
+    $res = [];
+    foreach ($arr as $a) {
+        $res[] = call_user_func($fn, $a);
+    }
+    return $res;
+}
+#+END_SRC
+
+#+BEGIN_notes
+All ~array_*~ functions can be written using ~foreach~.
+#+END_notes
+
+
+** Readable code
+
+#+BEGIN_SRC php
+// Convert all strings to lowercase
+array_map('strtolower', $strings);
+
+// Remove empty or whitespace-only strings
+array_filter(array_map('trim', $strings));
+
+// Sort countries by name, using the sort-order of a given locale.
+\uksort($countries, [\Collator::create($language), 'compare']);
+#+END_SRC
+
+** Somewhat readable code
+#+BEGIN_SRC php
+    private function orderByUids($uids, $contactPersons)
+    {
+        $uidIndices = array_flip($uids);
+        usort($contactPersons, function($a, $b) use ($uidIndices) {
+            return ($uidIndices[$a->getUid()] < $uidIndices[$b->getUid()])
+                ? -1
+                : 1;
+        });
+        return $contactPersons;
+    }
+#+END_SRC
+
+
+#+BEGIN_notes
+Readability can be argued.
+#+END_notes
+
+
+* Drawbacks & Pitfalls
+
+** Type-obscuring syntax
+
+Describing a function by name can make code difficult to understand, especially
+with higher-order functions:
+
+#+BEGIN_SRC php
+frob('Vladimir', 'Iosifovich', 'Levensthein');
+#+END_SRC
+
+
+** Not all functions are callbacks
+
+Some PHP "functions" are actually language constructs.
+
+#+BEGIN_SRC php
+$arr = ["", "0", "1"];
+
+array_map('empty', $arr); // fails
+array_map(function ($x) { return empty($x); }, $arr); // ok.
+// → [true, true, false]
+#+END_SRC
+
+
+* Summary
+
+- Make state changes explicit.
+- Functional programming *can* improve code quality.
+- Consider using `array_` methods instead of `foreach` loops.
+- The "strategy" pattern becomes unnecessary in presence of first-class
+  functions.
+- Don't overuse callables.
+
+* Questions?
