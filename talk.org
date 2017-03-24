@@ -189,11 +189,11 @@ array_map(function ($x) { return empty($x); }, $arr); // ok.
 
 * Summary
 
+** Take-away
 - Make state changes explicit.
-- Functional programming *can* improve code quality.
-- Consider using `array_` methods instead of `foreach` loops.
-- The "strategy" pattern becomes unnecessary in presence of first-class
-  functions.
+- Functional programming /can/ improve code quality.
+- Consider using ~array_~ methods instead of ~foreach~ loops.
+- The "strategy" pattern can be simplified in presence of first-class functions.
 - Don't overuse callables.
 
 * Questions?
