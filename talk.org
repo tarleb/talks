@@ -269,19 +269,20 @@ array_walk($names, function (&$name, $index) {
 });
 #+END_SRC
 
-** ~Callback~ is an unspecific type
+** ~Callable~ is an unspecific type
 #+BEGIN_SRC php
-function handleRequest(
-    string $path,
-    callable $handler)
+// from Silex\ControllerCollection
+function match(
+    $pattern,
+    $to = null)
 {
     …
 }
 #+END_SRC
 vs
 #+BEGIN_SRC php
-function handleRequest(
-    string $path,
+function match(
+    string $pattern,
     RequestHandler $handler)
 {
     …
@@ -291,6 +292,8 @@ function handleRequest(
 #+BEGIN_notes
 Exploring a codebase with an IDE is much simpler if argument types are clear and
 can be inspected.
+
+The above example is from the silex framework.
 #+END_notes
 
 ** Type-obscuring syntax
