@@ -305,7 +305,6 @@ frob('Vladimir', 'Iosifovich', 'Levensthein');
 #+END_SRC
 
 ** Not everything that can be called is a ~callable~
-
 Some PHP "functions" are actually language constructs.
 
 #+BEGIN_SRC php
@@ -347,13 +346,19 @@ Use of functions similar to JS; functions can be typed:
 type RequestHandler<R extends Request> =
     (req: R) => Result
 
-handleRequest(path: string, handler: RequestHandler) {…}
+match(pattern: string, handler: RequestHandler) {…}
 #+END_SRC 
 
-** PureScript
-#+BEGIN_SRC purescript
-j
+** Haskell
+#+BEGIN_SRC haskell
+removeCubesBelow100 :: [Int] -> [Int]
+removeCubesBelow100 = filter (>= 100) . map (^ 3)
+
+-- Print the first 5 cubic numbers greater than 100
+print . take 5 . removeCubesBelow100 $ [1..]
+-- Returns: [125, 216, 343, 512, 729]
 #+END_SRC
+
 
 ** Adapt to your language
 #+BEGIN_QUOTE
