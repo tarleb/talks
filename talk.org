@@ -169,10 +169,30 @@ Note the inverted argument order of ~array_filter~ compared to ~array_map~.
 Actual value of ~$even~ is ~[1 => 2, 3 => 4]~.
 #+END_notes
 
-** Readable code
+** ~array_column~
+Not really functional programming, but shortens common usecase of ~array_map~:
+#+BEGIN_SRC php
+$elements = [
+  ['name' => 'Hydrogen', 'electrons' => '1s¹'],
+  ['name' => 'Helium',   'electrons' => '1s²'],
+  ['name' => 'Lithium',  'electrons' => '2s¹'],
+];
+$names1 = array_column($elements, 'name');
+$names2 = array_map(
+  function($e) { return $e['name']; },
+  $elements
+);
+echo $names1 == $names2;
+// 1
+#+END_SRC
 
+
+* Examples
+
+** Readable code
 #+BEGIN_notes
-This is the most important slide of this talk.
+This is the most important slide of this talk. It demonstrates sensible use
+cases for functional programming in PHP.
 #+END_notes
 #+BEGIN_SRC php
 // Convert all strings to lowercase
@@ -235,10 +255,9 @@ JSON.
 #+BEGIN_SRC php
 class HotelController {
     public function showMapAction() {
-        $uriGen = $this->createUriGenerator();
         $hotels = $this->hotelService->generateJson(
             $language,
-            $uriGen);
+            $this->createUriGenerator());
         ⋮
     }
     private function createUriGenerator() {
@@ -340,7 +359,11 @@ Higher-order functions are very common:
   var doubled = [1, 2, 3, 4, 5].map(function(x) {
     return x * 2;
  })
+ // doubled == [2, 4, 6, 8, 10]
   #+END_SRC
+#+BEGIN_notes
+Note that functions are first class objects in JavaScript.
+#+END_notes
 
 ** JavaScript cont.
 - Callbacks for async operations
@@ -348,9 +371,14 @@ Higher-order functions are very common:
   $.ajax({…}).done(console.log)
              .fail(function(req, text, err) {..})
   #+END_SRC
-
+- ES6s arrow functions lead to less boilerplate
+  #+BEGIN_SRC php
+  materials.map(material => material.price);
+  #+END_SRC
 #+BEGIN_notes
-Note that functions are first class objects in JavaScript.
+The latter differs from the old syntax in that ~this~ is handled differently.
+
+There is an [[https://wiki.php.net/rfc/arrow_functions][RFC]] under discussion suggesting arrow function syntax for PHP.
 #+END_notes
 
 ** TypeScript
@@ -365,8 +393,11 @@ match(pattern: string, handler: RequestHandler) {…}
 
 ** Haskell
 #+BEGIN_SRC haskell
-print . map (^2) . filter (\x -> x `mod` 3 == 0) $ [1..10]
--- [9, 36, 81]
+doubled :: Int -> Int
+doubled = (* 2)
+
+sumOfDigits :: Int -> Int
+sumOfDigits = sum . map (\c -> read [c]) . show
 #+END_SRC
 #+BEGIN_SRC haskell
 matchAny :: RoutePattern -> Handler () -> ApplicationState ()
