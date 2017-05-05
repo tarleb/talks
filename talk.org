@@ -1,0 +1,457 @@
+#+TITLE: Types for Webdevs
+#+SUBTITLE: Cleaner, faster code
+#+AUTHOR: Albert Krewinkel
+
+* Brief intro to Types
+#+BEGIN_notes
+#+END_notes
+** What are types?
+
+These are the JavaScript types:
+   - String (e.g. \texttt{"Hello, World!"}),
+   - Number (e.g. ~23~, ~-13E7~),
+   - Boolean (i.e. ~true~ or ~false~),
+   - Null (~null~),
+   - Undefined, and
+   - Object (e.g. ~{"greeting": "hello!"}~).
+
+More generally, types are sets of possible values.
+
+** Yay, types!!!!
+- Find errors early.
+- Allow optimizations.
+- Enable Intellisense support in the the IDE.
+- Restrict the number of possible programs.
+
+
+* Defining and checking types
+** Duck-typing
+
+#+BEGIN_QUOTE
+If it looks like a duck, swims like a duck, and quacks like a duck, then it
+probably is a duck.
+#+END_QUOTE
+
+** Examples of duck typing
+#+BEGIN_SRC javascript
+function Duck() {
+  this.quack = function() { alert('Quaaaaack'); };
+  this.swim = function() { alert('Swimming'); };
+}
+function isDuck(obj) {
+  return typeof obj.swim === 'function' &&
+         typeof obj.quack === 'function';
+}
+var duck = new Duck();
+if (isDuck(duck)) {
+    duck.swim();
+}
+#+END_SRC
+
+** Properties of duck typing
+
+Duck typing
+- is based on the structure of an object,
+- is staight-forward, and
+- makes code-reuse simple, but
+- doesn't provide many guarantees.
+
+** Type-hinting in PHP
+#+BEGIN_SRC php
+class Person {
+    public $name;
+    function __construct($name) {
+        $this->name = $name;
+    }
+}
+
+function greet(Person $pers) {
+    echo "Hello, {$pers->name}!\n";
+}
+
+greet(new Person("John"));
+#+END_SRC
+
+** Scalar type-hinting in PHP7
+
+#+BEGIN_SRC php
+function not(bool $b) : bool {
+    return !$b;
+};
+
+var_dump(not(true)); // bool(false)
+#+END_SRC
+
+** Type errors in PHP7
+
+#+BEGIN_SRC php
+<?php declare(strict_types = 1);
+
+function not(bool $b) : bool {
+    return !$b;
+};
+
+var_dump(not(1));    // ERROR
+#+END_SRC
+
+: PHP Fatal error: Uncaught TypeError: Argument 1 passed
+: to not() must be of the type boolean, integer given.
+
+** Nullable types 
+#+BEGIN_SRC php
+class Person {
+    public $name;
+    function __construct(string $name) {
+        $this->name = $name;
+    }
+}
+function greet(?Person $pers = null) : void {
+    $name = $pers === null ? "stranger" : $pers->name;
+    echo "Hello, {$name}!\n";
+}
+greet(new Person("John"));  // Hello, John!
+greet();                    // Hello, stranger!
+#+END_SRC
+
+** TypeScript
+Same features as PHP, but statically enforced:
+#+BEGIN_SRC javascript
+class Person {
+    constructor(public name: string) {}
+}
+function greet(person?: Person): void {
+  const name = person ? person.name : "stranger";
+  console.log("Hello, " + name + "!");
+}
+greet(new Person("John"));  // Hello, John!
+greet();                    // Hello, stranger
+#+END_SRC
+** Fun with error messages                                         :noexport:
+#+BEGIN_SRC php
+function not(boolean $b) : boolean {
+    return $b;
+};
+#+END_SRC
+
+: Uncaught TypeError: Argument 1 passed to not() must be an instance of boolean, boolean given
+
+#+BEGIN_notes
+The PHP type for booleans is ~bool~, the error message is misleading.
+#+END_notes
+
+
+
+* Static vs Dynamic
+
+** Comparison of static and dynamic typing 
+
+| Property      | Static Typing        | Dynamic Typing      |
+|---------------+----------------------+---------------------|
+| Type checking | based on source code | based on values     |
+| Errors occur  | at compile time      | at runtime          |
+| Optimizations | simple               | sophisticated (JIT) |
+| Code reuse    | save                 | simple              |
+
+
+#+BEGIN_notes
+The table assumes that a compiler performes static type checking. This is
+usually true, but doesn't have to be the case, as IDEs can perform type-checking
+and give immediate feedback to the developer.
+#+END_notes
+
+** Opinions on typing                                              :noexport:
+
+#+BEGIN_QUOTE
+Strong typing is important because adherence to the discipline can help in the design
+of clear and well-structured programs. What is more, a wide range of logical errors can
+be trapped by any computer which enforces it”. (Bird and Wadler 1988 ,p.8)
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Static type systems [...] are the enemy of change. (Nierstrasz et al. 2005 ,p.4)
+#+END_QUOTE
+
+** Improved maintainability with static typing
+Study by Hanenberg et al. on software maintainability:
+
+#+BEGIN_QUOTE
+The results show rigorous empirical evidence that static types are indeed
+beneficial to [maintaining software and understanding undocumented code].
+#+END_QUOTE
+
+#+BEGIN_notes
+Full paper: An Empirical study on the impact of static typing on software
+maintainability, /Stefan Hanenberg, Sebastian Kleinschmager, Romain Robbes, Éric
+Tanter, Andreas Stefik/. Empir Software Eng, (2013-12-11). DOI:
+10.1007/s10664-013-9289-1.
+#+END_notes
+
+** Faster development
+#+BEGIN_QUOTE
+[Our] exploratory analysis [shows] that developers using a dynamic type system
+tend to look at different files more frequently when doing programming
+tasks---which is a potential reason for the observed differences in time.
+#+END_QUOTE
+
+** JavaScript vs TypeScript
+JavaScript is dynamically typed, TypeScript offers static type-checking.
+
+#+BEGIN_QUOTE
+This seems to be an indicator that the effect of static type systems is larger
+than often assumed, at least in comparison to code completion.
+#+END_QUOTE
+
+Tooling matters, but static typing is more important.
+
+#+BEGIN_notes
+An Empirical Investigation of the Effects of Type Systems and Code Completion on
+API Usability using TypeScript and JavaScript in MS Visual Studio. /Lars
+Fischer, Stefan Hanenberg/, Proceedings of the 11th Symposium on Dynamic
+Languages (154--167), 2015.
+#+END_notes
+
+** Languages less prone to defects frequently support types
+Languages more prone to defects:
+- C, C++
+- PHP
+
+Languages less prone to defects:
+- TypeScript
+- Scala
+- Haskell
+
+#+BEGIN_notes
+It should be kept in mind that PHP is frequently used by beginners, which will
+likely have influenced the result.
+
+Also
+
+#+BEGIN_QUOTE
+One should take care not to overestimate the impact of language on defects.
+While these relationships are statistically significan, the effects are quite
+small.
+#+END_QUOTE
+
+Taken from Ray et al., 2014 (A Large Scale Study of Programming Languages and
+Code Quality in Github.
+#+END_notes
+
+
+* Subtypes
+** Subtypes
+Computers have many ways to represent numbers:
+   - Integer (e.g. ~42~)
+   - Float (e.g. ~0.2~)
+   - Double (e.g. ~0.30000000000000004~)
+
+Each is a /subtype/ of the *Number* type.
+
+** Interfaces
+
+#+BEGIN_SRC php
+interface Named {
+    function getName() : string;
+}
+
+class Person implements Named {
+    private $name;
+    function __construct(string $name) {
+        $this->name = $name;
+    }
+    function getName() : string {
+        return $this->name;
+    }
+}
+#+END_SRC
+
+** Using interfaces as types
+#+BEGIN_SRC php
+interface Named {
+    function getName() : string;
+}
+
+function greet(Named $named) {
+    echo "Hello, {$named->getName()}!\n";
+}
+#+END_SRC
+
+#+BEGIN_notes
+The function ~greet~ accepts any object whose type is a subtype of ~Named~.
+#+END_notes
+
+** Liskov substitution principle
+The *L* in *SOLID*.
+
+#+BEGIN_QUOTE
+Subtype Requirement: Let $\Phi(x)$ be a property provable about objects $x$ of
+type $T$. Then $\Phi(y)$ should be true for objects $y$ of type $S$ where $S$ is
+a subtype of $T$.
+#+END_QUOTE
+
+** Liskov substitution principle cont.
+#+BEGIN_QUOTE
+Objects in a program should be replaceable with instances of their subtypes
+without altering the correctness of that program.
+#+END_QUOTE
+
+Numbers:
+
+If multiplication is allowed for *Number*, then it should behave similarly for *Float*.
+
+** Interface segregation principle
+The *I* in *SOLID*,
+
+#+BEGIN_QUOTE
+Many client-specific interfaces are better than one general-purpose interface.
+#+END_QUOTE
+
+Dividing your types into smaller subtypes is a good idea.
+
+
+
+* Gradual Typing
+** Generic types
+
+
+* Summary
+
+** Some advice
+- Use types
+- Seriously, use types
+
+
+* Implicit type conversions
+
+** Type conversion
+The PHP manual:
+#+BEGIN_QUOTE
+The type of a variable is not usually set by the programmer; rather, it is
+decided at runtime by PHP depending on the context in which that variable is
+used.
+#+END_QUOTE
+
+** Dangers of type conversion                                      :noexport:
+Example: Security in SQL queries taking an integer ID are a classic security
+problem:
+
+#+BEGIN_SRC php
+$query = 'SELECT * FROM users WHERE id = ' . $_GET['id'];
+#+END_SRC
+
+#+BEGIN_notes
+This line is terrible. I feld dirty writing it.
+#+END_notes
+
+** Can result in subtle bugs
+#+BEGIN_SRC php
+function isFalse($x) {
+    return $x == 0;   // BUG
+}
+
+var_dump(isFalse(false));  // bool(true)
+var_dump(!(bool) false);   // bool(true)
+
+var_dump(isFalse("0"));    // bool(true)
+var_dump(!(bool) "0");     // bool(true)
+
+var_dump(isFalse("00"));   // bool(true)
+var_dump(!(bool) "00");    // bool(false)
+#+END_SRC
+
+** Semantics of operators
+What is \texttt{3 * "Hello"}?
+
+- JavaScript :: NaN
+- PHP :: 0
+- Python :: "HelloHelloHello"
+- TypeScript :: Compile time error
+
+
+* Generics
+** List
+
+#+BEGIN_SRC php
+class MyList {
+    protected $item;
+    protected $next;
+    function __construct($item) {
+        $this->item = $item;
+    }
+    function getItem() {
+        return $this->item;
+    }
+    function getNext() : ?MyList {
+        return $this->next;
+    }
+    function setNext(MyList $next) {
+        $this->next = $next;
+    }
+}
+
+$a = new MyList("foo");
+$a->setNext(new MyList(1));
+
+for ($cur = $a; $cur; $cur = $cur->next) {
+    echo $cur->item . "\n";
+}
+#+END_SRC
+
+** Integer List
+#+BEGIN_SRC php
+class IntList {
+    private $item;
+    private $next;
+    function __construct(int $item) {
+        $this->item = $item;
+    }
+    function getItem() : int {
+        return $this->item;
+    }
+    function getNext() : ?IntList {
+        return $this->next;
+    }
+    function setNext(IntList $next) {
+        $this->next = $next;
+    }
+}
+#+END_SRC
+
+** Unsafe generic list in TypeScript
+#+BEGIN_SRC typescript
+class MyList {
+    private next?: any;
+
+    constructor(public item: any) {}
+
+    getNext() : any {
+        return this.next;
+    }
+    setNext(nextList: any) {
+        this.next = nextList;
+    }
+}
+
+const a = new MyList("hello");
+a.setNext(new MyList("world"));
+#+END_SRC
+
+** Safely type generic list
+#+BEGIN_SRC typescript
+class List<T> {
+    private next?: List<T>;
+
+    constructor(public item: T) {}
+
+    getNext() : List<T> {
+        return this.next;
+    }
+    setNext(nextList: List<T>) {
+        this.next = nextList;
+    }
+}
+
+const a = new List<string>("hello");
+a.setNext(new List<string>("world"));
+// a.setNext(new List<number>(1));  Won't compile
+#+END_SRC
+
