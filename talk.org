@@ -25,7 +25,7 @@ More generally, types are sets of possible values.
 
 
 * Defining and checking types
-** Duck-typing
+** Duck typing
 
 #+BEGIN_QUOTE
 If it looks like a duck, swims like a duck, and quacks like a duck, then it
@@ -35,17 +35,16 @@ probably is a duck.
 ** Examples of duck typing
 #+BEGIN_SRC javascript
 function Duck() {
-  this.quack = function() { alert('Quaaaaack'); };
-  this.swim = function() { alert('Swimming'); };
+  this.quack = function() { console.log('Quaaaaack'); };
+  this.swim = function() { console.log('Swimming'); };
 }
-function isDuck(obj) {
-  return typeof obj.swim === 'function' &&
-         typeof obj.quack === 'function';
+function duckAway(duck) {
+  duck.quack(); duck.quack();
+  duck.swim(); duck.quack();
 }
-var duck = new Duck();
-if (isDuck(duck)) {
-    duck.swim();
-}
+
+try { duckAway(new Duck()); }
+catch (e) { console.error("Not a duck"); }
 #+END_SRC
 
 ** Properties of duck typing
