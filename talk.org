@@ -1,5 +1,5 @@
 #+TITLE: Types for Webdevs
-#+SUBTITLE: Cleaner, faster code
+#+SUBTITLE: Cleaner, better, faster code
 #+AUTHOR: Albert Krewinkel
 
 * Brief intro to Types
