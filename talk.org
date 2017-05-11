@@ -104,10 +104,12 @@ class Person {
         $this->name = $name;
     }
 }
+
 function greet(?Person $pers = null) : void {
     $name = $pers === null ? "stranger" : $pers->name;
     echo "Hello, {$name}!\n";
 }
+
 greet(new Person("John"));  // Hello, John!
 greet();                    // Hello, stranger!
 #+END_SRC
@@ -118,10 +120,12 @@ Same features as PHP, but statically enforced:
 class Person {
     constructor(public name: string) {}
 }
+
 function greet(person?: Person): void {
   const name = person ? person.name : "stranger";
   console.log("Hello, " + name + "!");
 }
+
 greet(new Person("John"));  // Hello, John!
 greet();                    // Hello, stranger
 #+END_SRC
@@ -144,13 +148,12 @@ The PHP type for booleans is ~bool~, the error message is misleading.
 
 ** Comparison of static and dynamic typing 
 
-| Property      | Static Typing        | Dynamic Typing      |
-|---------------+----------------------+---------------------|
-| Type checking | based on source code | based on values     |
-| Errors occur  | at compile time      | at runtime          |
-| Optimizations | simple               | sophisticated (JIT) |
-| Code reuse    | save                 | simple              |
-
+| Property               | Static Typing | Dynamic Typing      |
+|------------------------+---------------+---------------------|
+| Type checking based on | source code   | runtime values      |
+| Errors occur at        | compile time  | runtime             |
+| Code reuse             | save          | simple              |
+| Optimizations          | simple        | sophisticated (JIT) |
 
 #+BEGIN_notes
 The table assumes that a compiler performes static type checking. This is
@@ -249,15 +252,16 @@ Each is a /subtype/ of the *Number* type.
 
 #+BEGIN_SRC php
 interface Named {
-    function getName() : string;
+    public function getName() : string;
 }
 
 class Person implements Named {
     private $name;
-    function __construct(string $name) {
+    public function __construct(string $name) {
         $this->name = $name;
     }
-    function getName() : string {
+
+    public function getName() : string {
         return $this->name;
     }
 }
@@ -266,7 +270,7 @@ class Person implements Named {
 ** Using interfaces as types
 #+BEGIN_SRC php
 interface Named {
-    function getName() : string;
+    public function getName() : string;
 }
 
 function greet(Named $named) {
@@ -403,10 +407,10 @@ class IntList {
     function __construct(int $item) {
         $this->item = $item;
     }
-    function getItem() : int {
+    function getItem(): int {
         return $this->item;
     }
-    function getNext() : ?IntList {
+    function getNext(): ?IntList {
         return $this->next;
     }
     function setNext(IntList $next) {
@@ -416,13 +420,11 @@ class IntList {
 #+END_SRC
 
 ** Unsafe generic list in TypeScript
-#+BEGIN_SRC typescript
+#+BEGIN_SRC javascript
 class MyList {
     private next?: any;
-
     constructor(public item: any) {}
-
-    getNext() : any {
+    getNext(): any {
         return this.next;
     }
     setNext(nextList: any) {
@@ -434,14 +436,12 @@ const a = new MyList("hello");
 a.setNext(new MyList("world"));
 #+END_SRC
 
-** Safely type generic list
-#+BEGIN_SRC typescript
+** Safely typed generic list
+#+BEGIN_SRC javascript
 class List<T> {
     private next?: List<T>;
-
     constructor(public item: T) {}
-
-    getNext() : List<T> {
+    getNext(): List<T> {
         return this.next;
     }
     setNext(nextList: List<T>) {
@@ -453,4 +453,3 @@ const a = new List<string>("hello");
 a.setNext(new List<string>("world"));
 // a.setNext(new List<number>(1));  Won't compile
 #+END_SRC
-
