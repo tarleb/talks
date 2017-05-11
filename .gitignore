@@ -1,3 +1,6 @@
 talk.*
 !talk.org
 talk-handout.*
+
+# Reveal.js files
+/reveal.js*

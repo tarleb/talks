@@ -1,5 +1,7 @@
 talk-file = talk.org
 
+revealjs_archive_url = https://github.com/hakimel/reveal.js/archive/3.5.0.tar.gz
+
 all: talk.html talk.tex talk.pdf talk-handout.pdf
 
 start: talk.html
@@ -30,7 +32,9 @@ talk-handout.pdf: $(talk-file)
 		--from org+smart -o $@ $<
 
 reveal.js:
-	git submodule update --init
+	curl --location -o reveal.js.tgz $(revealjs_archive_url)
+	mkdir -p reveal.js
+	tar zvxf reveal.js.tgz -C $@ --strip-components 1
 
 clean:
 	git clean -dXf
