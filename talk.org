@@ -3,10 +3,7 @@
 #+AUTHOR: Albert Krewinkel
 
 * Brief intro to Types
-#+BEGIN_notes
-#+END_notes
 ** What are types?
-
 These are the JavaScript types:
    - String (e.g. \texttt{"Hello, World!"}),
    - Number (e.g. ~23~, ~-13E7~),
@@ -17,11 +14,41 @@ These are the JavaScript types:
 
 More generally, types are sets of possible values.
 
+** User defined types
+#+BEGIN_SRC php
+class Person {
+    public name;
+}
+#+END_SRC
+
 ** Yay, types!!!!
 - Find errors early.
 - Allow optimizations.
-- Enable Intellisense support in the the IDE.
+- Shift knowledge from programmer to the machine (IntelliSense).
 - Restrict the number of possible programs.
+
+** Example: Dangers of missing type checking
+
+- Mars Climate Orbiter :: Interpretation of pound-seconds\\
+  as newton-seconds.
+
+** Example: XSS
+
+Problem: user input and program output are the same type.
+
+Cross-site scripting attack prevention:
+- Mark user input as unsafe on the type-level.
+- Allow only safe values to be emitted.
+- Sanitizing methods convert values from unsafe to safe.
+
+** Example: ~null~                                                 :noexport:
+
+Described as the "billion-dollar mistake".
+
+Similiar problems have happened to most of us\\
+(e.g. uninitialized variables).
+
+Proper typing can prevent this from happening.
 
 
 * Defining and checking types
@@ -212,7 +239,7 @@ Fischer, Stefan Hanenberg/, Proceedings of the 11th Symposium on Dynamic
 Languages (154--167), 2015.
 #+END_notes
 
-** Languages less prone to defects frequently support types
+** Most languages less prone to defects have static typing
 Languages more prone to defects:
 - C, C++
 - PHP
@@ -239,7 +266,7 @@ Code Quality in Github.
 #+END_notes
 
 
-* Subtypes
+* Getting the most out of types
 ** Subtypes
 Computers have many ways to represent numbers:
    - Integer (e.g. ~42~)
@@ -311,9 +338,53 @@ Many client-specific interfaces are better than one general-purpose interface.
 Dividing your types into smaller subtypes is a good idea.
 
 
+* Adding types
+** Gradual typing
+#+BEGIN_SRC php
+public Region {
+    private $name;
+    private $longitude;
+    private $latitude;
+    function __construct($name, $long, $lat) {
+        $this->name = $name; $this->longitude = $long;
+        $this->latitude = $lat;
+    }
+}
 
-* Gradual Typing
-** Generic types
+function showOnMap($region) { ... }
+#+END_SRC
+
+** Add some type hints
+#+BEGIN_SRC php
+public Region {
+    private $name;
+    private $longitude;
+    private $latitude;
+    function __construct($name, double $long, double $lat) {
+        $this->name = $name; $this->longitude = $long;
+        $this->latitude = $lat;
+    }
+}
+
+function showOnMap($region) { ... }
+#+END_SRC
+
+** Extract types
+#+BEGIN_SRC php
+class Coordinates {
+    ⋮
+    public function getLatitude(): double { … }
+    public function getLongitude(): double { … }
+}
+
+interface Locateable {
+    public function getCoordinates(): Coordinates;
+}
+
+class Region implements Locateable { … }
+
+function showOnMap(Locateable $region) { … }
+#+END_SRC
 
 
 * Summary
@@ -342,7 +413,7 @@ $query = 'SELECT * FROM users WHERE id = ' . $_GET['id'];
 #+END_SRC
 
 #+BEGIN_notes
-This line is terrible. I feld dirty writing it.
+This line is terrible. I felt dirty writing it.
 #+END_notes
 
 ** Can result in subtle bugs
