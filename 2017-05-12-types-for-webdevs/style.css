@@ -1,0 +1,51 @@
+.reveal a {
+    color: #444;
+}
+
+.reveal a:hover {
+    color: #fc9813;
+    text-decoration: underline;
+}
+
+.reveal a.url {
+    color: #fc9813;
+}
+
+.reveal a.url:hover {
+    color: #fc9813;
+    text-decoration: underline;
+}
+
+body {
+    background-color: #fff;
+}
+
+.reveal {
+    color: #444;
+}
+
+.subtitle,
+.reveal h2 {
+    color: #09c;
+}
+
+.reveal h1 {
+    color: #f93;
+}
+
+.author {
+    color: #fff;
+}
+
+code > span.kw {
+    color: #09c;
+    font-weight: normal;
+}
+
+code > span.fu {
+    color: #cc0077;
+}
+
+code > span.st {
+    color: #f93;
+}
