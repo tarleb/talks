@@ -78,7 +78,7 @@
    This is Normal Polish Notation.
    #+END_notes
 
-* TODO Binding to the Lua C API
+* Binding to the Lua C API
 ** Basic example
    #+BEGIN_SRC haskell
    -- | Lua interpreter state
@@ -94,6 +94,11 @@
      lua_pushinteger :: LuaState       -- Ptr ()
                      -> IO LuaInteger  -- IO CInt
    #+END_SRC
+   #+BEGIN_notes
+   - newtypes improve readability of bindings
+   - Deriving allows to retain only those properties which apply to the new
+     datatype.
+   #+END_notes
 ** Readability through newtypes
    #+BEGIN_SRC haskell
    foreign import ccall "lua.h lua_pcall"
@@ -124,12 +129,26 @@
    @@latex:\alert{\Large@@
    Potentially causes bugs due to GC and finalizers.
    @@latex:}@@
+   #+BEGIN_notes
+   The program will hang if an =unsafe= function tries to call back into
+   haskell. While this optimization is problematic, it is rarely a problem in
+   practice and hence enabled by default. It can be turned of by unsetting a
+   cabal flag.
+   #+END_notes
 ** Call-stack visualization
    #+CAPTION: Call stack
    [[file:images/call-stack.svg]]
+   #+BEGIN_notes
+   Haskell calls Lua via the C API. Lua can call back into Haskell, which can
+   call Lua again.
+   #+END_notes
 ** Error handling
    #+CAPTION: Call stack: =setjmp= / =longjmp=
    [[file:images/call-stack-error.svg]]
+   #+BEGIN_notes
+   Calling =longjmp= will unwind the call stack, possibly jumping over some
+   Haskell RTS frames. This will confuse and crash the RTS.
+   #+END_notes
 ** C Wrapper
    #+BEGIN_SRC C
    int hslua__getglobal(lua_State *L)
@@ -288,6 +307,6 @@
    - HsLua is great to make your program extensible.
    - Newtypes are awesome.
    - Variadic functions are possible.
-   - Wrapping C libraries might require additional C code .
-
-   GitHub organisation: [[https://github.com/hslua]]
+   - Wrapping C libraries might require additional C code.
+   - [[https://github.com/svaarala][Duktape]] doesn't have Haskell bindings yet.
+   - GitHub organisation: [[https://github.com/hslua]]
