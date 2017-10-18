@@ -1,0 +1,428 @@
+#+TITLE: Functional Programming in PHP
+#+SUBTITLE: Write clean code (or confuse everyone)
+#+AUTHOR: Albert Krewinkel
+
+* Functional programming
+
+#+BEGIN_notes
+This gives a brief overview over functional programming in PHP, including its
+principles, merits, challenges, and language support.
+#+END_notes
+
+** Generic properties
+- Pure functions (in the mathematical sense)
+- No global state
+- No /side effects/
+
+** Why should we care?
+Functional programming
+- simplifies some design patterns,
+- allows for straight-forward parallelization, and
+- makes it simpler to reason about code.
+
+#+BEGIN_notes
+- Parallelization is not important in PHP, but e.g. in JS.
+- Reasoning is simplified as there are no *hidden* states. Everything is
+  explicit.
+#+END_notes
+
+** Example: Strategy Pattern
+#+BEGIN_SRC php
+interface RequestHandler { handleRequest; }
+class DummyRequestHandler extends RequestHandler {…} 
+class HttpRequestHandler extends RequestHandler {…} 
+
+function handlePath($path, RequestHandler $handler) {…}
+handlePath("/app", new HttpRequestHandler());
+#+END_SRC
+
+#+BEGIN_notes
+- It's a classic pattern described by the gang of four.
+- Plays nicely with the open/closed principle of SOLID.
+#+END_notes
+
+
+* Functions in PHP
+
+** Lambda functions
+#+BEGIN_SRC php
+function (int $x) {
+    return 2 * $x;
+};
+#+END_SRC
+#+BEGIN_notes
+Lambda functions (a.k.a. anonymous functions) were introduced in PHP 5.3.
+#+END_notes
+
+** Assigning functions to variables
+#+BEGIN_SRC php
+$doubleInt = function (int x) {
+    return 2 * $x;
+}
+#+END_SRC
+
+** Using functions
+#+BEGIN_SRC php
+$oneDoubled = call_user_func($doubleInt, 1);
+// $oneDoubled == 2
+#+END_SRC
+
+** Closures
+#+BEGIN_SRC php
+$multiplier = 3;
+$scale = function ($x) use ($multiplier) {
+    return $x * $multiplier;
+};
+
+echo call_user_func($scale, 4);
+// 12
+#+END_SRC
+
+** Callables
+#+BEGIN_SRC php
+class Foo
+{
+    static function frob(int $x)
+    {
+        return $x * 2;
+    }
+}
+
+$foo = new Foo();
+$bar1 = call_user_func([$foo, 'frob'],  11.5);
+$bar2 = call_user_func(['Foo', 'frob'], 11.5);
+$bar3 = call_user_func(['Foo::frob'],   11.5);
+#+END_SRC
+
+#+BEGIN_notes
+Second and third versions only work because ~frob~ is static.
+#+END_notes
+
+** Callable objects
+#+BEGIN_SRC php
+class Greeter {
+    private $msg;
+    function __construct($msg) { $this->msg = $msg; }
+    function __invoke() { echo $this->msg; }
+}
+
+$greeter = new Greeter("Hello, World!");
+call_user_func($greeter);
+// prints "Hello, World!"
+#+END_SRC
+
+
+* Working with functions in PHP
+
+** Functions as return values
+#+BEGIN_SRC php
+function createScaler(int $multiplier) {
+    return function ($x) use ($multiplier) {
+        return $x * $multiplier;
+    };
+}
+
+echo call_user_func(createScaler(3), 4);
+// 12
+#+END_SRC
+
+** ~array_*~ functions
+- process a set of values all at once,
+- allow to clearly state ones intend, and
+- shield against unwanted side-effects.
+
+#+BEGIN_notes
+All ~array_*~ functions can be written using ~foreach~.
+
+#+BEGIN_SRC
+function array_map($fn, $arr) {
+    $res = [];
+    foreach ($arr as $a) {
+        $res[] = call_user_func($fn, $a);
+    }
+    return $res;
+}
+#+END_SRC
+#+END_notes
+
+** ~array_map~
+#+BEGIN_SRC php
+$doubleInt = function(int $x) {
+    return $x << 1;
+};
+$doubled = array_map($doubleInt, [1, 2, 3, 4, 5]);
+// $doubled == [2, 4, 6, 8, 10]
+#+END_SRC
+
+** ~array_filter~
+#+BEGIN_SRC php
+$even = array_filter([1, 2, 3, 4], function (int $x) {
+    return ($x % 2 == 0);
+});
+// array_values($even) == [2, 4]
+#+END_SRC
+#+BEGIN_notes
+Removes values not satisfying the property.
+
+Note the inverted argument order of ~array_filter~ compared to ~array_map~.
+
+Actual value of ~$even~ is ~[1 => 2, 3 => 4]~.
+#+END_notes
+
+** ~array_column~
+Not really functional programming, but shortens common usecase of ~array_map~:
+#+BEGIN_SRC php
+$elements = [
+  ['name' => 'Hydrogen', 'electrons' => '1s¹'],
+  ['name' => 'Helium',   'electrons' => '1s²'],
+  ['name' => 'Lithium',  'electrons' => '2s¹'],
+];
+$names1 = array_column($elements, 'name');
+$names2 = array_map(
+  function($e) { return $e['name']; },
+  $elements
+);
+echo $names1 == $names2;
+// 1
+#+END_SRC
+
+
+* Examples
+
+** Readable code
+#+BEGIN_notes
+This is the most important slide of this talk. It demonstrates sensible use
+cases for functional programming in PHP.
+#+END_notes
+#+BEGIN_SRC php
+// Convert all strings to lowercase
+array_map('strtolower', $strings);
+
+// Remove empty or whitespace-only strings
+array_filter(array_map('trim', $strings));
+
+// Sort countries by name, using the sort-order
+// of a given locale.
+\uksort(
+    $countries,
+    [\Collator::create($language), 'compare']
+);
+#+END_SRC
+
+** Somewhat readable code
+#+BEGIN_SRC php
+    private function orderByUids($uids, $contactPersons)
+    {
+        $uidIndices = \array_flip($uids);
+        $cmp = function($a, $b) use ($uidIndices) {
+            return ($uidIndices[$a->getUid()] -
+                    $uidIndices[$b->getUid()])
+        };
+        \usort($contactPersons, $cmp);
+        return $contactPersons;
+    }
+#+END_SRC
+#+BEGIN_notes
+Readability can be argued.
+#+END_notes
+
+** Mutual dependency: problem
+#+BEGIN_SRC php
+class HotelController {
+    public function showMapAction() {
+        $hotels = $this->hotelService->generateJson($language);
+        ⋮
+    }
+}
+class HotelService {
+    public function generateJsonData($language) {
+        foreach ($this->allHotels as $hotel) {
+            ⋮
+            $url = /* ??? */
+            ⋮
+         }
+    }
+}
+#+END_SRC
+#+BEGIN_notes
+We want a JSON representation of all hotels. The JSON should include the hotels'
+URLs, but only the controller has all the information to create an URL for the
+hotels. The controller should not be botherd with the inner structure of the
+JSON.
+#+END_notes
+
+** Mutual Dependency: resolution
+#+BEGIN_SRC php
+class HotelController {
+    public function showMapAction() {
+        $hotels = $this->hotelService->generateJson(
+            $language,
+            $this->createUriGenerator());
+        ⋮
+    }
+    private function createUriGenerator() {
+        return function ($hotel) {
+            return =
+                $this->controllerContext()->getUriBuilder()
+                     ->reset()
+                     ->setTargetPageUid(5)
+                     ->uriFor(…, ["id" => $hotel->getUid()], …);
+        }
+    }
+}
+#+END_SRC
+#+BEGIN_notes
+We pass a closure to the JSON generating function. The closure, created in the
+controller, knows how to generate a URL for a given hotel.
+#+END_notes
+
+
+* Drawbacks & Pitfalls
+
+** Clunky and unfamiliar
+#+BEGIN_SRC php
+foreach ($names as &$name) {
+    $name = strtolower($name);
+}
+#+END_SRC
+vs
+#+BEGIN_SRC php
+array_walk($names, function (&$name, $index) {
+    $name = strtolower($name);
+});
+#+END_SRC
+
+** Inconsistent
+#+BEGIN_SRC php
+array_map($callable, $array);
+#+END_SRC
+vs
+#+BEGIN_SRC php
+array_walk($array, $callable);
+#+END_SRC
+
+** Type-obscuring syntax
+Describing a function by name can make code difficult to understand, especially
+with higher-order functions:
+
+#+BEGIN_SRC php
+frob('Vladimir', 'Iosifovich', 'Levensthein');
+#+END_SRC
+
+** ~Callable~ is an unspecific type
+#+BEGIN_SRC php
+// from Silex\ControllerCollection
+function match(
+    $pattern,
+    $to = null) {…}
+#+END_SRC
+vs
+#+BEGIN_SRC php
+function match(
+    string $pattern,
+    RequestHandler $handler) {…}
+#+END_SRC
+
+#+BEGIN_notes
+Exploring a codebase with an IDE is much simpler if argument types are clear and
+can be inspected. A lot of typing information is lost when using callables.
+There has been a [[https://wiki.php.net/rfc/callable-types][PHP RFC]] to change this, but it was defeated with 18 votes in
+favor and 19 votes against.
+
+The above example is from the silex framework.
+#+END_notes
+
+** Not everything that can be called is a ~callable~
+Some PHP "functions" are actually language constructs.
+
+#+BEGIN_SRC php
+$arr = ["", "0", "1"];
+
+// fails
+array_map('empty', $arr);
+
+// OK
+array_map(function ($x) { return empty($x); }, $arr);
+// → [true, true, false]
+#+END_SRC
+
+* Functions in other languages
+
+** JavaScript
+Higher-order functions are very common:
+- Event handlers
+  #+BEGIN_SRC javascript
+  document.addEventListener('click', closeModalWindow);
+  #+END_SRC
+- Array manipulation
+  #+BEGIN_SRC javascript
+  var doubled = [1, 2, 3, 4, 5].map(function(x) {
+    return x * 2;
+ })
+ // doubled == [2, 4, 6, 8, 10]
+  #+END_SRC
+#+BEGIN_notes
+Note that functions are first class objects in JavaScript.
+#+END_notes
+
+** JavaScript cont.
+- Callbacks for async operations
+  #+BEGIN_SRC javascript
+  $.ajax({…}).done(console.log)
+             .fail(function(req, text, err) {..})
+  #+END_SRC
+- ES6s arrow functions lead to less boilerplate
+  #+BEGIN_SRC php
+  materials.map(material => material.price);
+  #+END_SRC
+#+BEGIN_notes
+The latter differs from the old syntax in that ~this~ is handled differently.
+
+There is an [[https://wiki.php.net/rfc/arrow_functions][RFC]] under discussion suggesting arrow function syntax for PHP.
+#+END_notes
+
+** TypeScript
+Use of functions similar to JS; functions can be typed:
+
+#+BEGIN_SRC typescript
+type RequestHandler<R extends Request> =
+    (req: R) => Result
+
+match(pattern: string, handler: RequestHandler) {…}
+#+END_SRC 
+
+** Haskell
+#+BEGIN_SRC haskell
+doubled :: Int -> Int
+doubled = (* 2)
+
+sumOfDigits :: Int -> Int
+sumOfDigits = sum . map (\c -> read [c]) . show
+#+END_SRC
+#+BEGIN_SRC haskell
+matchAny :: RoutePattern -> Handler () -> ApplicationState ()
+matchAny p h = do
+  …
+#+END_SRC
+
+** Adapt to your language
+#+BEGIN_QUOTE
+Every language has its own way. Follow its form, do not try to program as if
+you were using another language.
+#+END_QUOTE
+
+
+* Summary
+
+** General advice
+- Make state changes explicit.
+- Functional programming can improve code quality.
+- The "strategy" pattern can be simplified in presence of first-class functions.
+
+** PHP-specific advice
+- Consider using ~array_~ methods instead of ~foreach~ loops.
+- Do so only if it improves code quality.
+- Universal sorting functions are worth using.
+- Don't overuse callables.
+
+* Questions?
