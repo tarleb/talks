@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     viewBox="0 0 360 181">
+  <style>
+    * { color: #666; }
+    svg {font-family: "Fira Sans", sans-serif}
+    .stack-item {stroke: gray; fill: white;}
+    .arg rect { stroke: #3b7 }
+    .arg text { fill: #3b7 }
+    .res rect { stroke: #b37 }
+    .res text { fill: #b37 }
+  </style>
+  <defs>
+    <linearGradient id="stack-bottom-gradient" x1="0" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="white" />
+      <stop offset="95%" stop-color="gray" />
+    </linearGradient>
+  </defs>
+  <g id="stack-pre-call" >
+    <g id="function" transform="translate(0 90)">
+      <rect width="100" height="31" class="stack-item" />
+      <text x="50" y="20" text-anchor="middle" font-size="16">function</text>
+    </g>
+    <g class="stack-bottom" transform="translate(-1 120)">
+      <rect x="0.5" width="101" height="61" fill="url(#stack-bottom-gradient)"
+            stroke="none" stroke-width="0" />
+    </g>
+    <g id="arg3" transform="translate(0 0)" class="arg">
+      <rect width="100" height="31" class="stack-item" />
+      <text x="50" y="20" text-anchor="middle" font-size="16">arg 3</text>
+    </g>
+    <g id="arg2" transform="translate(0 30)" class="arg">
+      <rect width="100" height="31" class="stack-item" />
+      <text x="50" y="20" text-anchor="middle" font-size="16">arg 2</text>
+    </g>
+    <g id="arg1" transform="translate(0 60)" class="arg">
+      <rect width="100" height="31" class="stack-item" />
+      <text x="50" y="20" text-anchor="middle" font-size="16">arg 1</text>
+    </g>
+  </g>
+  <g id="transition" transform="translate(110 60)">
+    <path d="M 0 20
+             L 121 20 L 112 8 L 116 4.5 L 130 23
+             L 116 40.5 L 112 37 L 121 25
+             L 0 25 z"
+          transform="translate(0 5)"
+          fill="#666" />
+    <text x="30" y="16" font-size="16">
+      call
+      <tspan fill="#3b7">3</tspan>
+      <tspan fill="#b37">1</tspan>
+    </text>
+  </g>
+  <g id="stack-post-call" transform="translate(260)">
+    <g class="stack-bottom" transform="translate(-1 120)">
+      <rect x="0.5" width="101" height="61" fill="url(#stack-bottom-gradient)"
+            stroke="none" stroke-width="0" />
+    </g>
+    <g id="result1" transform="translate(0 90)" class="res">
+      <rect width="100" height="31" class="stack-item" />
+      <text x="50" y="20" text-anchor="middle" font-size="16">result 1</text>
+    </g>
+  </g>
+</svg>

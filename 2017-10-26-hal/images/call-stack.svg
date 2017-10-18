@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     viewBox="0 -1 200 162">
+  <style>
+    * { color: #666; }
+    svg {font-family: "Fira Sans", sans-serif}
+    .stack-item {stroke: gray; fill: white;}
+  </style>
+  <defs>
+    <linearGradient id="stack-bottom-gradient" x1="0" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="white" />
+      <stop offset="95%" stop-color="gray" />
+    </linearGradient>
+  </defs>
+  <g id="call-stack" >
+    <g class="stack-bottom" transform="translate(-1 100)">
+      <rect x="0.5" width="81" height="61" fill="url(#stack-bottom-gradient)"
+            stroke="none" stroke-width="0" />
+      <text x="40" y="30" text-anchor="middle" font-size="16">Haskell</text>
+    </g>
+    <g id="" transform="translate(0 80)">
+      <rect width="80" height="21" class="stack-item" />
+      <text x="40" y="16" text-anchor="middle" font-size="14">C</text>
+    </g>
+    <g id="arg3" transform="translate(0 60)" class="arg">
+      <rect width="80" height="21" class="stack-item" />
+      <text x="40" y="16" text-anchor="middle" font-size="14">Lua</text>
+    </g>
+    <g id="arg2" transform="translate(0 40)" class="arg">
+      <rect width="80" height="21" class="stack-item" />
+      <text x="40" y="16" text-anchor="middle" font-size="14">Haskell</text>
+    </g>
+    <g id="" transform="translate(0 20)">
+      <rect width="80" height="21" class="stack-item" />
+      <text x="40" y="16" text-anchor="middle" font-size="14">C</text>
+    </g>
+    <g id="arg3" transform="translate(0 0)" class="arg">
+      <rect width="80" height="21" class="stack-item" />
+      <text x="40" y="16" text-anchor="middle" font-size="14">Lua</text>
+    </g>
+  </g>
+</svg>

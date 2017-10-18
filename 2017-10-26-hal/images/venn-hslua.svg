@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     viewBox="0 0 180 172">
+  <style>
+    text { fill: white; text-anchor: middle; font-size: 18px;}
+  </style>
+  <g id="venn-hslua">
+    <circle cx="60" cy="60" r="60" fill="#0b0" style="opacity: 0.5" />
+    <circle cx="120" cy="60" r="60" fill="#00007f" style="opacity: 0.5" />
+    <circle cx="90" cy="112" r="60" fill="#5e5086" style="opacity: 0.5" />
+    <text x="32" y="48">C</text>
+    <text x="148" y="48">Lua</text>
+    <text x="90" y="142">Haskell</text>
+    <text x="90" y="82">hslua</text>
+  </g>
+</svg>

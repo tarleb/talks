@@ -1,0 +1,293 @@
+#+TITLE: HsLua
+#+SUBTITLE: Using Lua to make Haskell programs extensible
+#+INSTITUTE: @@latex:\includegraphics[width=0.15\textwidth,height=0.15\textwidth]{images/fti.jpg}@@
+#+AUTHOR: Albert Krewinkel
+#+DATE: HAL 2017, Oct. 26
+#+OPTIONS: ':t todo:nil
+
+*  Prelude
+** Outline
+   #+NAME: venn-hslua
+   #+CAPTION: Overview
+   [[file:images/venn-hslua.svg]]
+** Authors and Maintainers
+   - Gracjan Polak,
+   - Ömer Sinan Ağacan, and
+   - that guy in front.
+** Haskell bindings
+   #+BEGIN_SRC haskell
+   main = runLua prog
+    where
+     prog :: Lua ()
+     prog = do
+       openlibs
+       callFunc "print" "Hello, World!"
+   #+END_SRC
+   → =Hello, World!=
+
+* Lua
+** Small scripting language
+   Lua is
+   - well-designed,
+   - usable with a C API,
+   - amendable with a small footprint, /and/
+   - the default when extensibility is desired.
+** Programs using Lua
+   Lua is used in
+     - servers,
+     - games,
+     - media viewers, /and/
+     - pandoc.
+   #+BEGIN_notes
+   - Servers :: Redis, Apache, lighttpd, nginx, varnish, prosody,
+   - Games :: Angry Birds, Civilization VI, SimCity 4, the Witcher, World of Warcraft
+   - Low-level :: NetBSD, Damn Small Linux
+   - Media viewers :: VLC, mpv, darktable, WeeChat
+   - Security software :: wireshark, nmap, snort, flame
+   #+END_notes
+** Obligatory Fibonacci example
+   #+BEGIN_SRC lua
+   local pretty = require "pl.pretty"
+   local tablex = require "pl.tablex"
+
+   function fib(n)
+     local a, b = 0, 1
+     for i = 0, (n - 1) do
+       a, b = b, a + b
+     end
+     return a
+   end
+
+   local tbl = {2, 3, 5, 7}
+   pretty.dump(tablex.map(fib, tbl))
+   -- {1, 2, 5, 13}
+   #+END_SRC
+** Stack-centered API: pushing values
+   #+NAME: pushinteger-stack
+   #+CAPTION: pushing an integer
+   #+ATTR_HTML: :width 70%
+   [[file:images/pushinteger-stack.svg]]
+
+** Stack-centered API: Function calling
+   #+NAME: funcall-stack
+   #+CAPTION: Calling a function
+   #+ATTR_HTML: :width 70%
+   [[file:images/funcall-stack.svg]]
+
+   #+BEGIN_notes
+   This is Normal Polish Notation.
+   #+END_notes
+
+* TODO Binding to the Lua C API
+** Basic example
+   #+BEGIN_SRC haskell
+   -- | Lua interpreter state
+   newtype LuaState = LuaState (Ptr ())
+     deriving (Eq)
+
+   -- | Integers in Lua
+   newtype LuaInteger = LuaInteger CInt
+     deriving (Enum, Eq, Integral, Num, Ord, Real, Show)
+
+   -- | Push an integer to the stack
+   foreign import ccall "lua.h lua_pushinteger"
+     lua_pushinteger :: LuaState       -- Ptr ()
+                     -> IO LuaInteger  -- IO CInt
+   #+END_SRC
+** Readability through newtypes
+   #+BEGIN_SRC haskell
+   foreign import ccall "lua.h lua_pcall"
+     lua_pcall :: Ptr ()
+               -> CInt
+               -> CInt
+               -> CInt
+               -> IO CInt
+
+   foreign import ccall "lua.h lua_pcall"
+     lua_pcall :: LuaState
+               -> NumArgs
+               -> NumResults
+               -> StackIndex
+               -> IO StatusCode
+   #+END_SRC
+** Cheap optimization with =unsafe=
+   Functions not calling back into Haskell can be marked =unsafe=.
+   #+BEGIN_SRC haskell
+   --            Improves performance
+   --                considerably
+   --                     |
+   foreign import ccall unsafe "lua.h lua_pushinteger"
+     lua_tointeger :: LuaState -> IO LuaInteger
+   #+END_SRC
+   @@latex:\pause{} @@
+   @@latex:\vspace{3em} @@
+   @@latex:\alert{\Large@@
+   Potentially causes bugs due to GC and finalizers.
+   @@latex:}@@
+** Call-stack visualization
+   #+CAPTION: Call stack
+   [[file:images/call-stack.svg]]
+** Error handling
+   #+CAPTION: Call stack: =setjmp= / =longjmp=
+   [[file:images/call-stack-error.svg]]
+** C Wrapper
+   #+BEGIN_SRC C
+   int hslua__getglobal(lua_State *L)
+   {
+     const char *name = lua_tostring(L, 1);
+     lua_getglobal(L, name);
+     return 1;
+   }
+
+   int hslua_getglobal(lua_State *L, const char *name)
+   {
+     lua_pushcfunction(L, hslua__getglobal);
+     lua_pushlstring(L, name, strlen(name));
+     return -lua_pcall(L, 1, 1, 0);
+   }
+   #+END_SRC
+   
+** Other Challenges                                                :noexport:
+   - Both, Lua and Haskell, have garbage collectors:\\
+     → everything must be copied, especially strings.
+   - Supported Lua versions differ in their C API:\\
+     → wrappers and CPP directives.
+
+* Interacting with Lua
+** Pushing data
+   #+BEGIN_SRC haskell
+   -- | A value that can be pushed to the Lua stack.
+   class ToLuaStack a where
+     -- | Pushes a value onto Lua stack, casting it 
+     -- into meaningfully nearest Lua type.
+     push :: a -> Lua ()
+   #+END_SRC
+   #+BEGIN_SRC lua
+   -- pushing a tuple ("Hello", True, [40 .. 42]) gives
+   {"Hello", true, {40, 41, 42}}
+   #+END_SRC
+** Getting data
+   #+BEGIN_SRC haskell
+   -- | A value that can be read from the Lua stack.
+   class FromLuaStack a where
+     -- | Check if at index @n@ there is a convertible Lua
+     -- value and if so return it.  Throws a @'LuaException'@
+     -- otherwise.
+     peek :: StackIndex -> Lua a
+
+   -- Assume top of stack contains table {"moin", 5}
+   (str, num) <- peek (-1) :: Lua (String, LuaInteger)
+   -- str == "moin"
+   -- num == LuaInteger 5
+   #+END_SRC
+** Calling functions
+   #+BEGIN_SRC lua
+   -- define a function in lua:
+   function greet(greeting, name)
+     greeting = greeting or "Hello, %s"
+     name     = name     or os.getenv("USER")
+     print(greeting:format(name))
+   end
+   #+END_SRC
+   #+BEGIN_SRC haskell
+   --             fnName  argument(s)
+   () <- callFunc "greet"
+   () <- callFunc "greet" "Moin %s" "Theo"
+   -- output: Hello albert
+   -- output: Moin Theo
+   #+END_SRC
+** Stack layout
+   #+NAME: funcall-stack
+   #+CAPTION: Calling "greet"
+   #+ATTR_HTML: :width 70%
+   [[file:images/calling-greet-stack.svg]]
+** =callFunc=
+   #+BEGIN_SRC haskell
+   callFunc :: (LuaCallFunc a) => String -> a
+   callFunc fnName = callFunc' fnName (return ()) 0
+
+   class LuaCallFunc a where
+     callFunc' :: String -> Lua () -> NumArgs -> a
+
+   -- With greet:
+   -- a == String -> String -> Lua ()
+   #+END_SRC
+** =callFunc'=
+   #+BEGIN_SRC haskell
+   class LuaCallFunc a where
+     callFunc' :: String -> Lua () -> NumArgs -> a
+   
+   instance (FromLuaStack a) => LuaCallFunc (Lua a) where
+     callFunc' fnName pushArgs nargs = do
+       getglobal' fnName
+       pushArgs
+       call nargs 1
+       peek (-1) <* pop 1
+   
+   instance (ToLuaStack a, LuaCallFunc b) => LuaCallFunc (a -> b) where
+     callFunc' fnName pushArgs nargs x =
+       callFunc' fnName (pushArgs *> push x) (nargs + 1)
+   #+END_SRC
+
+
+* Pandoc Filters
+** The universal document converter
+   #+NAME: pandoc-formats-diagram
+   #+CAPTION: Pandoc conversion paths
+   [[file:images/pandoc-formats-diagram.jpg]]
+   #+BEGIN_notes
+   - From :: Docbook, Docx, EPUB, Haddock, HTML, JSON, LaTeX, Markdown (flavors:
+             CommonMark, GitHub, MultiMarkdown, PHP Markdown Extra, strict),
+             MediaWiki, Muse, native, ODT, OPML, Org, RST, t2t, Textile,
+             TikiWiki, TWiki, and VimWiki.
+
+   - To :: Asciidoc, Beamer, CommonMark, Context, Docbook4, Docbook5, DOCX,
+           DokuWiki, DZSlides, EPUB2, EPUB3, FB2, Haddock, HTML4, HTML5, ICML,
+           JATS, JSON, LaTeX, groff (man and ms), Markdown (all flavors
+           mentioned as above), MediaWiki, Muse, native, ODT, OPML, Org, plain,
+           RevealJS, RST, RTF, S5, Slideous, slidy, TEI, Texinfo, Textile, and
+           ZimWiki.
+
+   - Via :: Internal document model.
+   #+END_notes 
+** Document AST: Inlines
+   #+BEGIN_SRC haskell
+     data Inline
+         = Str String
+         | Space | SoftBreak | LineBreak
+         | Emph [Inline]
+         | Strong [Inline]
+         | Cite [Citation]  [Inline]
+         | Code Attr String
+         | Math MathType String
+         | RawInline Format String
+         | Span Attr [Inline]
+         …
+   #+END_SRC
+** Lua filter
+   #+BEGIN_SRC lua
+   function Str (elem)
+     if elem.text == "{{helloworld}}" then
+       return pandoc.Emph {pandoc.Str "Hello, World"}
+     end
+   end
+   #+END_SRC
+   Run with
+   #+BEGIN_SRC sh
+   pandoc --lua-filter=hello-macro.lua input.md
+   #+END_SRC
+** Advantages
+   Why?
+   - Easy to use;
+   - extendable without Haskell-stack;
+   - fully platform independent;
+   - no other software required.
+
+* Wrapping up
+** Summary and further reading
+   - HsLua is great to make your program extensible.
+   - Newtypes are awesome.
+   - Variadic functions are possible.
+   - Wrapping C libraries might require additional C code .
+
+   GitHub organisation: [[https://github.com/hslua]]
