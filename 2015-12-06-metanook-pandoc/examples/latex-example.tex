@@ -1,0 +1,78 @@
+%% The following is taken from: Graph Grammer Slicing – An Approach to
+%% Reducing the Combinatorial Complexity of Tracking Observables in Complex
+%% Reaction System, Albert Krewinkel, Master's Thesis, 2011
+
+\section{Integration of Quantitative Parameters}
+A main goal of biological systems modeling is the gain of new insights on the
+internal dynamics of the system.  The dynamics are determined by
+concentrations, reaction rates and other numerical parameters which have not
+been considered yet.  In order to enable quantitative analysis and simulation
+of the systems, these values must be an integral part of the models.
+
+Augmenting rule-based models with numerical parameters is straightforward, and
+was already mentioned in the definition of productions for chemical systems
+(see \prettyref{sec:model-react-rules} on page
+\pageref{sec:model-react-rules}).  Each rewrite rule in the model, or
+production in our graph grammar terminology, has a parameter assigned
+determining how often or how fast the rule is executed within the system.  The
+type of the parameter, reaction constant, rate or probability, may differ
+depending on the intended type of simulation.
+
+Simulation of systems becomes increasingly important the more complex the
+examined system is; simulations are often possible even when the analytical
+methods fail.  We describe two common techniques of reactive systems
+simulation.
+
+\subsection{Simulations Using Ordinary Differential Equations}
+A common and simple simulation technique is based on mass action kinetics and
+elementary reactions.  An elemental reaction occurs in a single step and
+without intermediate products \cite{Svehla1993}.  The rate of an elementary
+reaction is determined by mass action kinetics, that is the rate is the
+product of educt concentrations and a single reaction constant.  For a
+unimolecular reaction $A  \to \mathrm{products}$, the rate is given by
+\[ \frac{d[A]}{dt} = - k [A] \]
+and for a bimolecular reaction $A + B \to \mathrm{products}$, the rate is
+\[ \frac{d[A]}{dt} = \frac{d[B]}{dt} = - k [A] [B] \]
+where $k$ is the reaction constant $[A]$ and $[B]$ are the concentrations of
+molecules $A$ and $B$, respectively (for details, see for example
+\cite{Mortimer2003}).
+
+Assuming all rewrite rules in a model represent elemental reactions and have
+reaction constants assigned, it is possible to generate a system of ordenary
+differential equations for numerical simulations.  The algorithms for this was
+first described by \citet{Blinov2006} in \citeyear{Blinov2006}.  Given a set
+of molecules which make up the start solution, all possible direct derivations
+are determined and the corresponding differential equation is generated for
+each direct derivation using mass action kinetics.  The resulting sytems can
+then be analysed computationaly using standard tools of numerical integration.
+
+This method is used by many rule-based biochemical modeling tools, including
+\texttt{BioNetGen} \cite{Blinov2004}, \texttt{little b} \cite{Mallavarapu2009}
+and \texttt{Bio-PEPA} \cite{Ciocchetta2008}.  The algorithm may be
+computationally expensive due to the need for repeated solution of the
+subgraph isomorphism problem \cite{Blinov2006} and the possibly large number
+of reactions \cite{Danos2008} (see also \prettyref{sec:chall-comb-expl}).
+However, complexity can be tamed using reduction techniques as described in
+\prettyref{sec:meth-model-reduct}.  Once a reasonably compact ODE systems has
+been generated, it allows rapid exploration of systems dynamics.
+
+\subsection{Simulations Using Stochastic Approaches}
+Stochastic simulations are an alternative to the deterministic simulations
+lined out in the previous section.  The Gillespie algorithm
+\cite{Gillespie1977} is a classic stochastic method to generate trajectories
+of molecule concentrations within a reaction system.  Like for ODE-based
+simulations described above, reactions must be elementary in order for the
+original algorithm to produce correct results.  However, extension of the
+algorithm have been developed such that the restriction to mass action
+kinetics is lifted and more complex kinetics, like the biochemical important
+Michael-Menten kinetics, may be used \cite{Rao2003,Cao2005}.
+
+Another interesting approach are continuous time Markov chains, modeling
+concentrations as discrete quantities.  This allows for probabilistic model
+checking and numerical simulations which converge to the ODE case for
+increasing numbers of states \cite{Calder2006}.
+
+For both simulation types there exist modeling tools with support for the
+respective method, for example \texttt{BioNetGen} \cite{Blinov2004} for the
+Gillespie algorithm or \texttt{Bio-PEPA}, which supports all types of
+simulations mentioned above.
