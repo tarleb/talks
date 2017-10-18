@@ -1,0 +1,57 @@
+#+TITLE: Pandoc
+#+SUBTITLE: a universal markup converter
+#+AUTHOR: Albert Krewinkel
+#+DATE: Oct. 6, 2016
+
+** Basic features
+- convert markup formats
+- basic templating engine
+- extensible
+- created 2006 by John MacFarlane
+- written in Haskell
+
+** Formats
+- Input formats ::
+Markdown (6 variants), DocBook, Word docx, EPUB, Haddock, HTML, JSON, LaTeX,
+MediaWiki, native Pandoc, ODT, OPML, Emacs org-mode, reStructuredText, txt2tags,
+Textile, and TWiki.
+
+- Output formats ::
+Almost all input formats plus AsciiDoc, LaTeX ~beamer~, ConTeXt, DokuWiki,
+DZSlides, FB2, ICML, Groff man pages, PDF (via LaTeX), plain text, reveal.js,
+rtf, s5, Slideous, Slidy, TEI simple, TexInfo, and ZimWiki.
+
+** What does it offer to academics?
+- Broad choice of input formats,
+- mathematical formulæ conversion,
+- citation support (Bibtex, Endnote, Zotero…),
+- creation of slides and handouts from the same document, and
+- flexibility combined with simplicity.
+
+** Extensibility
+With Pandoc, one can write
+  - custom templates,
+  - custom document writers in lua, and
+  - filters changing the document
+    - read/write JSON
+    - act on the document AST
+    - libraries available in many languages.
+
+** Science software
+
+Used in or supported by
+  - your favorite editor :: probably has a Pandoc plugin
+  - RStudio :: IDE for R
+  - Jupyter :: notebook for python, julia, haskell…
+  - Authorea :: collaborative writing, publishing tool
+
+** Outlook
+
+- Document internal references
+- Execution of code snippets via filters
+- Reader for AsciiDoc
+- Floating tables
+
+** Fin
+
+Thanks!
