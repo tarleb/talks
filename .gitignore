@@ -1,0 +1,2 @@
+# PDFs are created via pandoc, no need to check them in
+*.pdf
