@@ -48,11 +48,11 @@
    #+END_notes
 
 * Lua
-** Small scripting language
+** Lua: a small scripting language
    Lua is
    - well-designed,
    - usable with a C API,
-   - amendable with a small footprint, /and/
+   - embeddable with a small footprint, /and/
    - the default when extensibility is desired.
 ** Programs using Lua
    Lua is used in
@@ -90,7 +90,29 @@
    #+ATTR_HTML: :width 70%
    [[file:images/pushinteger-stack.svg]]
 
-** Stack-centered API: Function calling
+* Binding to the Lua C API
+** Foreign Function Interface
+   #+BEGIN_SRC haskell
+   -- | Push an integer to the stack
+   foreign import ccall "lua.h lua_pushinteger"
+     lua_pushinteger :: LuaState       -- Ptr ()
+                     -> LuaInteger     -- CInt
+                     -> IO ()
+
+   -- | Lua interpreter state
+   newtype LuaState = LuaState (Ptr ())
+     deriving (Eq)
+
+   -- | Integers in Lua
+   newtype LuaInteger = LuaInteger CInt
+     deriving (Enum, Eq, Integral, Num, Ord, Real, Show)
+   #+END_SRC
+   #+BEGIN_notes
+   - newtypes improve readability of bindings
+   - Deriving allows to retain only those properties which apply to the new
+     datatype.
+   #+END_notes
+** Function calling
    #+NAME: funcall-stack
    #+CAPTION: Calling a function
    #+ATTR_HTML: :width 70%
@@ -99,43 +121,21 @@
    #+BEGIN_notes
    This is Normal Polish Notation.
    #+END_notes
-
-* Binding to the Lua C API
-** Basic example
-   #+BEGIN_SRC haskell
-   -- | Lua interpreter state
-   newtype LuaState = LuaState (Ptr ())
-     deriving (Eq)
-
-   -- | Integers in Lua
-   newtype LuaInteger = LuaInteger CInt
-     deriving (Enum, Eq, Integral, Num, Ord, Real, Show)
-
-   -- | Push an integer to the stack
-   foreign import ccall "lua.h lua_pushinteger"
-     lua_pushinteger :: LuaState       -- Ptr ()
-                     -> IO LuaInteger  -- IO CInt
-   #+END_SRC
-   #+BEGIN_notes
-   - newtypes improve readability of bindings
-   - Deriving allows to retain only those properties which apply to the new
-     datatype.
-   #+END_notes
 ** Readability through newtypes
    #+BEGIN_SRC haskell
-   foreign import ccall "lua.h lua_pcall"
-     lua_pcall :: Ptr ()
-               -> CInt
-               -> CInt
-               -> CInt
-               -> IO CInt
-
    foreign import ccall "lua.h lua_pcall"
      lua_pcall :: LuaState
                -> NumArgs
                -> NumResults
                -> StackIndex
                -> IO StatusCode
+
+   foreign import ccall "lua.h lua_pcall"
+     lua_pcall :: Ptr ()
+               -> CInt
+               -> CInt
+               -> CInt
+               -> IO CInt
    #+END_SRC
    #+BEGIN_notes
    There are no parameter names in the FFI bindings, having a speaking =newtype=
@@ -191,7 +191,10 @@
      return -lua_pcall(L, 1, 1, 0);
    }
    #+END_SRC
-   
+   #+BEGIN_notes
+   We create a new function which catches errors, using an ad-hoc protocol to
+   signal errors back to Haskell. Lua closures are used for maximum portability.
+   #+END_notes
 ** Other Challenges                                                :noexport:
    - Both, Lua and Haskell, have garbage collectors:\\
      → everything must be copied, especially strings.
@@ -235,11 +238,11 @@
    end
    #+END_SRC
    #+BEGIN_SRC haskell
-   --             fnName  argument(s)
+   -- Calling from Haskell
    () <- callFunc "greet"
+   -- → Hello albert
    () <- callFunc "greet" "Moin %s" "Theo"
-   -- output: Hello albert
-   -- output: Moin Theo
+   -- → Moin Theo
    #+END_SRC
 ** Stack layout
    #+NAME: funcall-stack
@@ -331,7 +334,9 @@
 ** Summary and further reading
    - HsLua is great to make your program extensible.
    - Newtypes are awesome.
-   - Variadic functions are possible.
    - Wrapping C libraries might require additional C code.
-   - [[https://github.com/svaarala][Duktape]] doesn't have Haskell bindings yet.
+   - Variadic functions are possible.
    - GitHub organisation: [[https://github.com/hslua]]
+   #+BEGIN_notes
+   - [[https://github.com/svaarala][Duktape]] has a C API similar to Lua's and doesn't have Haskell bindings yet.
+   #+END_notes
