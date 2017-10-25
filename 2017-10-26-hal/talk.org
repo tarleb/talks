@@ -6,21 +6,20 @@
 #+OPTIONS: ':t todo:nil
 
 * Prelude
-** Outline
+** Combining many languages
    #+NAME: venn-hslua
    #+CAPTION: Overview
    [[file:images/venn-hslua.svg]]
-** Authors and Maintainers
-   - 2007--2012: Gracjan Polak,
-   - 2012--2016: Ömer Sinan Ağacan, and
-   - since this year: that guy in front.
-   #+BEGIN_notes
-   - Gracjan was the original author
-   - Ömer put it on GitHub, did some substantial clean-up, and maintained it for
-     year.
-   - Albert took over maintainer duty while working on pandoc. He tried to
-     improve safety, performance, and API.
-   #+END_notes
+** Outline
+   #+BEGIN_columns
+   #+BEGIN_column
+   {{toc}}
+   #+END_column
+
+   #+BEGIN_column
+   [[file:images/venn-hslua.svg]]
+   #+END_column
+   #+END_columns
 ** Haskell bindings
    #+BEGIN_SRC haskell
    main :: IO ()
@@ -35,6 +34,17 @@
    #+BEGIN_notes
    HsLua provides some convenient ways to interact with Lua. This code uses
    Lua's =print= function to output ="Hello, World!"=.
+   #+END_notes
+** Authors and Maintainers
+   - 2007--2012: Gracjan Polak,
+   - 2012--2016: Ömer Sinan Ağacan, and
+   - since this year: that guy in front.
+   #+BEGIN_notes
+   - Gracjan was the original author
+   - Ömer put it on GitHub, did some substantial clean-up, and maintained it for
+     year.
+   - Albert took over maintainer duty while working on pandoc. He tried to
+     improve safety, performance, and API.
    #+END_notes
 
 * Lua
