@@ -47,7 +47,7 @@
      improve safety, performance, and API.
    #+END_notes
 
-* Lua
+* Lua: what and why?
 ** Lua: a small scripting language
    Lua is
    - well-designed,
@@ -84,13 +84,21 @@
    pretty.dump(tablex.map(fib, tbl))
    -- {1, 2, 5, 13}
    #+END_SRC
+** Stack centered C API
+   #+NAME: funcall-stack
+   #+CAPTION: Calling a function
+   #+ATTR_HTML: :width 70%
+   [[file:images/funcall-stack.svg]]
+   #+BEGIN_notes
+   =call= takes the number of arguments passed to the function, as well as the
+   number of values that should result from this invocation.
+   #+END_notes
+* Binding to the Lua C API
 ** Stack-centered API: pushing values
    #+NAME: pushinteger-stack
    #+CAPTION: pushing an integer
    #+ATTR_HTML: :width 70%
    [[file:images/pushinteger-stack.svg]]
-
-* Binding to the Lua C API
 ** Foreign Function Interface
    #+BEGIN_SRC haskell
    -- | Push an integer to the stack
@@ -111,15 +119,6 @@
    - newtypes improve readability of bindings
    - Deriving allows to retain only those properties which apply to the new
      datatype.
-   #+END_notes
-** Function calling
-   #+NAME: funcall-stack
-   #+CAPTION: Calling a function
-   #+ATTR_HTML: :width 70%
-   [[file:images/funcall-stack.svg]]
-
-   #+BEGIN_notes
-   This is Normal Polish Notation.
    #+END_notes
 ** Readability through newtypes
    #+BEGIN_SRC haskell
@@ -161,6 +160,8 @@
    practice and hence enabled by default. It can be turned of by unsetting a
    cabal flag.
    #+END_notes
+
+* Handling and relaying errors
 ** Call-stack visualization
    #+CAPTION: Call stack
    [[file:images/call-stack.svg]]
@@ -201,7 +202,7 @@
    - Supported Lua versions differ in their C API:\\
      → wrappers and CPP directives.
 
-* Interacting with Lua
+* Interacting with Lua from Haskell
 ** Pushing data
    #+BEGIN_SRC haskell
    -- | A value that can be pushed to the Lua stack.
@@ -265,19 +266,19 @@
    class LuaCallFunc a where
      callFunc' :: String -> Lua () -> NumArgs -> a
    
+   instance (ToLuaStack a, LuaCallFunc b) => LuaCallFunc (a -> b) where
+     callFunc' fnName pushArgs nargs x =
+       callFunc' fnName (pushArgs *> push x) (nargs + 1)
+
    instance (FromLuaStack a) => LuaCallFunc (Lua a) where
      callFunc' fnName pushArgs nargs = do
        getglobal' fnName
        pushArgs
        call nargs 1
        peek (-1) <* pop 1
-   
-   instance (ToLuaStack a, LuaCallFunc b) => LuaCallFunc (a -> b) where
-     callFunc' fnName pushArgs nargs x =
-       callFunc' fnName (pushArgs *> push x) (nargs + 1)
    #+END_SRC
 
-* Pandoc Filters
+* Example: Pandoc Filters
 ** The universal document converter
    #+NAME: pandoc-formats-diagram
    #+CAPTION: Pandoc conversion paths
@@ -313,6 +314,7 @@
    #+END_SRC
 ** Lua filter
    #+BEGIN_SRC lua
+   -- Expand macro
    function Str (elem)
      if elem.text == "{{helloworld}}" then
        return pandoc.Emph {pandoc.Str "Hello, World"}

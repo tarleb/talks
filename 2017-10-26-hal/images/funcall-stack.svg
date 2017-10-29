@@ -44,8 +44,8 @@
              L 0 25 z"
           transform="translate(0 5)"
           fill="#666" />
-    <text x="30" y="16" font-size="16">
-      call
+    <text x="10" y="16" font-size="12" font-family="monospace">
+      lua_call
       <tspan fill="#3b7">3</tspan>
       <tspan fill="#b37">1</tspan>
     </text>
