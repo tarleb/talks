@@ -57,12 +57,12 @@ Erweiterungsmöglichkeiten von pandoc demonstriert.
 - Kostenreduktion für Autoren, Lesende
 
 
-## Beispiel: Wikipedia
+<!-- ## Beispiel: Wikipedia -->
 
-- Umfangreiche Enzyklopädie
-- Betrieben von Freiwilligen
-- Moderate (keine?) finanziellen Interessen
-- MediaWiki sorgt für einfaches Editieren
+<!-- - Umfangreiche Enzyklopädie -->
+<!-- - Betrieben von Freiwilligen -->
+<!-- - Moderate (keine?) finanziellen Interessen -->
+<!-- - MediaWiki sorgt für einfaches Editieren -->
 
 
 # Pandoc
@@ -84,16 +84,22 @@ Output-Formate
 ## Features
 
 - Formatversteher
-  
-  ![](images/twitter-pandoc-paper.jpg){width=40%}
-  
 - Templating-Engine
+- Eigene Ausgabeformate
+- Programmatische Dokumentbearbeitung
+- Quellenangaben / Literaturverzeichnis
 
-  ![](images/twitter-preservation.jpg){width=40%}
+## Formatversteher
 
-- Erweiterungsmöglichkeiten
+![Formatkonvertierung](images/twitter-pandoc-paper.jpg){width=80%}
 
-  ![](images/twitter-pandoc-extensible.jpg){width=40%}
+## Templating
+
+![Templating-Engine](images/twitter-preservation.jpg){width=80%}
+
+## Erweiterungsmöglichkeiten
+
+![Erweiterungsmöglichkeiten](images/twitter-pandoc-extensible.jpg){width=80%}
 
 ## Workflow
 
@@ -137,7 +143,7 @@ AAAAAAAAAH, nein!
 :::
 
 
-## Was ist Markdown?
+## Was ist Markdown? {#id-markdown}
 - Lesbares und leicht schreibbares Markup
 - Eines (wenn nicht sogar *das*) Standardformat im Netz
 - Basierend auf E-Mail Konventionen
@@ -147,6 +153,8 @@ AAAAAAAAAH, nein!
 
 ## Beispiele
 [Link zur CommonMark Online-Demo](http://spec.commonmark.org/dingus/).
+
+[Beispiel](#id-markdown)
 
 
 # Pandoc erweitern
@@ -202,7 +210,7 @@ Pandoc ist nutzbar mit anderen Programmen:
 
 - Robert Winkler, CINVESTAV México
 - John MacFarlane, UC Berkeley
-- Allen pandoc Entwickler
+- Pandoc Community
 - Nook Orga!
 
 ## Resourcen
