@@ -1,0 +1,139 @@
+\documentclass{scrbook}
+
+\input{style}
+\input{macros}
+
+% Set title and author used in the PDF meta data
+\hypersetup{
+  pdftitle={$title$},
+  pdfauthor={$author$}
+}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pause}{}
+$if(tables)$
+\usepackage{longtable,booktabs}
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
+$endif$
+
+% Depending on which of the following two color schemes you import your thesis will be in color or grayscale. I recommend to generate a colored version as a PDF and a grayscale version for printing.
+
+\input{schema-color}
+%% \input{schema-gray}
+
+\newcommand{\duedate}{$date$}
+
+\begin{document}
+  \frontmatter
+\begin{titlepage}
+  \thispagestyle{empty}
+
+  \vskip1cm
+
+  \pgfimage[height=2.5cm]{uni-logo-example\imagesuffix}
+  
+  \vskip2.5cm
+  
+  \LARGE
+  
+  \textbf{\sffamily\color{maincolor}$title$}
+
+  %% \textit{How to Write a Master Thesis?}
+
+  \normalfont\normalsize
+
+  \vskip2em
+  
+  \textbf{\sffamily\color{maincolor}Talk}
+
+  im Rahmen der \\
+  \textbf{\sffamily\color{maincolor}MetaNook 2017} \\
+
+  \vskip1em
+
+  vorgelegt von \\
+  \textbf{\sffamily\color{maincolor}$author$}
+
+  \vskip1em
+  
+  ausgegeben und betreut von \\
+  \textbf{\sffamily\color{maincolor}Prof. Dr. Erika Musterfrau}
+
+  \vskip1em
+
+  mit Unterstützung von\\
+  Lieschen Müller
+
+  \vskip1em
+
+  Die Arbeit ist im Rahmen einer Tätigkeit bei der Firma FTI Touristik GmbH entstanden.
+
+
+  \vfill
+
+  Berlin, den $date$
+\end{titlepage}
+  \include{declaration}
+
+  \cleardoublepage
+  \thispagestyle{plain}
+
+  % Abstract
+  $abstract$
+  % END: Abstract
+
+  \cleardoublepage
+  \phantomsection
+  \pdfbookmark{Inhaltsverzeichnis}{tableofcontents}
+  \markboth{Inhaltsverzeichnis}{}
+  \tableofcontents
+
+  % Remove this for the final version of the thesis!
+  \cleardoublepage
+  \phantomsection
+  \pdfbookmark{Liste der Todos}{listoftodos}
+  \listoftodos[Liste der Todos]
+
+  \mainmatter
+  $body$
+  %% \include{einleitung}
+  %% \include{grundlagen}
+  %% \include{konzept}
+  %% \include{evaluation}
+  %% \include{fazit}
+
+  %% \appendix
+
+  %% \include{appendix}
+
+  %% \backmatter
+
+  %% \cleardoublepage
+  %% \phantomsection
+  %% \pdfbookmark{Abbildungsverzeichnis}{listoffigures}
+  %% \listoffigures
+
+  %% \cleardoublepage
+  %% \phantomsection
+  %% \pdfbookmark{Tabellenverzeichnis}{listoftables}
+  %% \listoftables
+
+  %% \cleardoublepage
+  %% \phantomsection
+  %% \pdfbookmark{Definitions- und Theoremverzeichnis}{listoftheorems}
+  %% \renewcommand{\listtheoremname}{Definitions- und Theoremverzeichnis}
+  %% \listoftheorems[ignoreall,show={Lemma,Theorem,Korollar,Definition}]
+
+  %% \cleardoublepage
+  %% \phantomsection
+  %% \pdfbookmark{Quelltextverzeichnis}{listoflistings}
+  %% \lstlistoflistings
+
+  %% \include{abkuerzungen}
+
+  \cleardoublepage
+  \phantomsection
+  \pdfbookmark{Literaturverzeichnis}{bibliography}
+  \bibliography{literature}
+\end{document}
