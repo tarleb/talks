@@ -1,0 +1,155 @@
+#+title: Frontend Testing
+#+subtitle: A newbie's notes
+
+* What's cooking? 
+** Fair warning
+
+- Tests are bae. ♥
+- I'm a testing noob.
+- This is only an overview.
+- Interrupt and correct me when I'm wrong!
+- There's a reason we have people exclusively focusing on testing.
+
+  
+* What can we test?
+
+** Defining boundaries: What's "frontend"?
+- Interface between the user and the back end.
+- HTML, CSS and every-increasing amounts of JS.
+- Used to be depleted of logic.
+
+*Oversimplified*: everything that happens in the browser.
+  
+#+BEGIN_notes
+Frontend in the webdev sense.
+
+Out of scope:
+- Backend logic
+- API behavior
+#+END_notes
+
+** What can we test?                                               :noexport:
+- Measure page load times.
+- Check render speed.
+- Verify visual changes.
+- Ensure usability, design, orthography, etc.
+
+#+BEGIN_notes
+The last point is sometimes referred to as /visual testing/ or /manual testing/.
+But /visual testing/ is also used to describe the process of recording visual
+steps to reproduce an issue.
+#+END_notes
+
+** Performance
+
+- PageSpeed ::
+  - good performance indicator;
+  - offers suggestion on how to improve;
+  - includes many points relevant to backend devs.
+
+- Phantomas ::
+  - PhantomJS-based web performance metrics tool;
+  - can check many timing, sizing, and counting metrics.
+
+** Visual regression
+- Wraith ::
+  - Take screenshots;
+  - produce visual diffs;
+  - requires PhantomJS/Headless Chrome/Slimer
+
+  #+ATTR_HTML: :width 150px :height 150px
+  [[file:./wraith-logo.png]]
+
+- BackstopJS ::
+  - can also simulate user interaction.
+
+** Logic-focused JavaScript functions
+- Mocha
+- Chai
+- Sinon   
+- Jasmine
+- ⋮
+
+** That's it?
+
+[[file:./i-was-told.jpg]]
+
+** CasperJS                                                        :noexport:
+- Test scripted actions;
+- uses PhantomJS;
+- can change screen sizes;
+- allows to automate complex user actions.
+
+
+* Browser automation
+
+** PhantomJS
+   
+ [[file:./phantomjs-logo.png]]
+
+- Headless, pure JS browser emulator
+- Plenty of wrappers (most notably: CasperJS)
+- Not a real browser
+
+** Selenium
+   
+ [[file:./selenium.png]]
+   
+- Testing-framework for web applications
+- can be used to setup a grid to run tests concurrently;
+- has plenty of wrappers, including cloud services.
+
+** WebDriver
+
+- It's a protocol for browser automation;
+- allows introspection and control of user agents;
+- was pioneered by Selenium.
+
+** WebDriver wrappers
+
+- WebdriverIO
+
+  #+ATTR_HTML: :height 100px
+  [[file:./webdriverio.png]]
+
+- Nightwatch
+
+  #+ATTR_HTML: :height 100px
+  [[file:./nightwatch.png]]
+
+- Protractor
+
+  #+ATTR_HTML: :height 100px
+  [[file:./protractor-logo.png]]
+
+
+  
+* Other test things
+
+** Useful programs
+
+- Karma :: runs tests and reports test results.
+- Appium :: selenium for mobile
+- Espresso :: test android apps
+
+** Results formats
+- JUnit :: report format for (failing) tests
+- Clover :: format for test coverage
+
+** Cloud services
+- Saucelabs
+- Browser stack
+
+
+* Final notes
+** Friday
+[[file:./if-you-could.jpg]]
+  
+** 
+   
+[[file:./test-all-the-things.jpg]]
+
+- Performance
+- Visual regression
+- Pure-JavaScript logic
+- Browser interaction
