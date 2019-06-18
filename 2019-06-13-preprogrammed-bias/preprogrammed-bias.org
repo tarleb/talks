@@ -1,0 +1,124 @@
+#+TITLE: Preprogrammed Bias
+#+SUBTITLE: weird facts about sex
+
+* What is it?
+  
+** Recombination
+   #+CAPTION: \copy Rdbickel - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=49599354
+   [[file:meiosis.svg]]
+
+** Yeast
+   #+CAPTION: Source: Wikipedia
+   [[file:yeast-mating.png]]
+
+** Dimorphism
+   #+CAPTION: \copy Francis C. Franklin, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=31025358
+   #+ATTR_HTML: :height 80%
+   [[file:dimorphism.jpg]]
+
+* Why is it?
+
+** Red Queen
+   [[file:red-queen.jpg]]
+   
+** The game keeps changing
+   #+CAPTION: Trypanosoma (Photo Credit: CDC/Dr. Myron G. Schultz)
+   #+ATTR_HTML: :height 80%
+   [[file:trypanosoma.jpg]]
+
+* Sexual selection
+  
+** Sex with higher investment is picky
+   #+CAPTION: Eurasian dotterel -- CC BY-SA 2.5, https://commons.wikimedia.org/w/index.php?curid=786138
+   #+ATTR_HTML: :height 80%
+   [[file:Charadrius_morinellus_male.jpg]]
+** Sex with lower investment is more aggressive
+   #+CAPTION: By Florin DUMITRESCU - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=6581345
+   #+ATTR_HTML: :height 75%
+   [[file:seahorse.jpg]]
+
+** Now for something completely different
+   #+ATTR_HTML: :width 100%
+   [[file:monty-python-foot.jpg]]
+
+
+* Major Histocompatibility Complex
+  
+** MHC (Major Histocompatibility Complex)
+
+   #+BEGIN_notes
+   - Central part of immune system
+   - Graft rejection
+   #+END_notes
+  
+   #+CAPTION: MHC subchains, by user atropos235 on en.wikipedia - CC BY 2.5, https://commons.wikimedia.org/w/index.php?curid=1805483
+   #+ATTR_HTML: :height 80%
+   [[file:MHC_class_2.png]]
+  
+** MHC variance matters
+   
+   #+BEGIN_notes
+   Low intra-population variance can lead to problems
+   
+   Example: face tumors of tasmanian devils
+   #+END_notes
+   
+   #+CAPTION: Tasmanian devil, by JJ Harrison - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=12262604
+   [[file:Sarcophilus_harrisii_taranna.jpg]]
+   
+   https://doi.org/10.1073/pnas.0704580104
+
+** MHC influences reproduction
+
+   - The smell of MHC can induce spontaneous aborts
+     (https://dx.doi.org/10.1126/science.6857281)
+   - Eggs select sperms for MHC diversity
+     https://dx.doi.org/10.1111/evo.13591
+  
+** In Humans, too
+  #+CAPTION: MHC preference (https://doi.org/10.1098/rspb.1995.0087)
+  #+ATTR_HTML: :height 70%
+  [[file:mhc-similarity-preference.png]]
+  
+  #+BEGIN_notes
+  Different MHC profile is preferred
+  #+END_notes
+  
+** In Humans, too (2)
+   #+CAPTION: Smell reminds me of... (https://doi.org/10.1098/rspb.1995.0087)
+   #+ATTR_HTML: :height 70%
+   [[file:smell-reminds-of.png]]
+  
+** The modern world doesn't change this
+   #+BEGIN_notes
+   Humans prefer perfume if it smells "like them"
+   #+END_notes
+   
+   #+CAPTION: https://doi.org/10.1098/rspb.2012.2889
+   #+ATTR_HTML: :width 70%
+   [[file:preference-for-self-stimulus.jpg]]
+
+** No, men are not immune
+- But don't care quite as much about MHC
+
+  https://doi.org/10.1098/rspb.1997.0204
+  https://doi.org/10.1016/j.yhbeh.2004.11.005
+- Related but different: men can smell ovulation
+  https://doi.org/10.1177/0956797609357733
+  
+  #+BEGIN_notes
+  Testosterone increases if men smell fertile women
+  #+END_notes
+  
+* So...?
+  
+** Thinks to keep in mind
+
+   - It never hurts to know the source of some biases
+   - Biology still has a strong impact on us
+   - There are biases which your didn't even know about
+
+   #+BEGIN_notes
+   It's good to know that acceptance/preference of more aggressive persons
+   depending on their sex might have been programmed into us by evolution.
+   #+END_notes
