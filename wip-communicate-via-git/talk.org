@@ -1,0 +1,100 @@
+#+TITLE: Effective communication via git
+#+SUBTITLE: The key to a committed relationship
+
+* Information and Communication
+  #+BEGIN_notes
+  Communication is the exchanging of information.
+  #+END_notes
+
+** Information in commits
+
+   - Code added / altered / removed
+   - Commit title
+   - Commit message
+   - Parent commit(s)
+
+   #+BEGIN_notes
+   Merges are a special kind of commit which have multiple parents.
+   #+END_notes
+
+** Info access
+
+   - ~git show~
+   - ~git log~
+
+* Communication Basics
+
+** How
+   Code modifications
+   - Be clear in what you are saying.
+   - One logical unit of change per commit.
+
+** What
+   Commit title
+    - Keep it around 50 chars or less.
+    - Don't use more than 72 chars.
+    - Be precise.
+    - Say what /this commit/ does (e.g., "Fix frobnication of terms").
+
+    #+BEGIN_notes
+    - "what", not "how"
+    - Titles don't end with a period
+    - Brief titles are easier to understand, but also works around technical
+      limitations of some tools.
+    #+END_notes
+
+** Why
+   Explain in commit message
+    - Describe commit in more detail.
+    - Focus on the "why".
+
+   #+BEGIN_notes
+   - "why" might already be described in a linked ticket.
+   - still nice to have a self-contained log.
+   - still worth to say "why this way, and not another way".
+   #+END_notes
+
+** Context
+   - Link to relevant resources.
+   - Collect related commits in a branch.
+   - Preserve commit grouping by creating a merge commit.
+
+   #+BEGIN_notes
+   - "Relevant resources" includes Jira tickets, GitHub issues, etc.
+   - Grouping a single commit might not make sense
+   #+END_notes
+
+
+* Workflow
+
+** TODO Branches                                                   :noexport:
+   #+BEGIN_notes
+   https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows
+   #+END_notes
+
+** Avoid Metro Maps
+   [[file:metro-git.png]]
+
+#+BEGIN_notes
+- History should be easy to follow.
+- Unnecessary branching/merging should be avoided.
+- If your git history starts to look like a metro map, you are doing it wrong.
+  https://github.com/vbarbaresi/MetroGit
+#+END_notes
+
+** TODO No Foxtrot Merges                                          :noexport:
+
+   - Number of the main branch should not change
+
+** TODO Fast-Forward or No Fast-Forward                            :noexport:
+   Advantages of going fast-forward, rebasing, and proper merge commits.
+
+
+* History                                                          :noexport:
+
+** TODO Preserve History
+
+* Resources
+
+  - https://sethrobertson.github.io/GitBestPractices/#backups
+  - https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows
