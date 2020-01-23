@@ -1,0 +1,168 @@
+#+TITLE: Lisp
+#+AUTHOR: Albert Krewinkel
+#+LINK: wp https://en.wikipedia.org/wiki/
+
+* Lambda Calculus
+
+- Introduced by [[https://en.wikipedia.org/wiki/Alonzo_Church][Alonzo Church]] in 1930.
+- Equivalent in power to Turing Machines.
+- Example term: ~λf.λx.f x~.
+- Serves as the inspiration of Lisp.
+
+#+BEGIN_notes
+- The example term is the Church numeral 1
+- Lisp is based on the *untyped* λ calculus
+#+END_notes
+
+* History
+
+- Invented in 1958 by [[https://en.wikipedia.org/wiki/John_McCarthy_(computer_scientist)][John McCarthy]].
+- Hugely popular for early AI work.
+- Hardware was build specifically to run Lisp.
+- Many dialects exist, some of which are still popular.
+
+#+BEGIN_notes
+- Second oldest programming language still in use (after FORTRAN).
+- McCarty also invented Garbage Collection and many other things.
+- [[https://en.wikipedia.org/wiki/Lisp_machine][Lisp machine]]
+- [[wp:Common Lisp][Common Lisp]], [[wp:Scheme][Scheme]], [[wp:Emacs_Lisp][Emacs Lisp]], [[wp:Clojure][Clojure]], and [[wp:Racket][Racket]]
+#+END_notes
+
+* Relevant xkcd
+
+  #+CAPTION: Lisp cycles
+  #+ATTR_HTML: :width 100%
+  #+ATTR_LATEX: :width \textwidth
+  [[file:lisp_cycles.png]]
+
+
+* Square
+
+#+BEGIN_SRC emacs-lisp :results silent :exports code
+  (defun square (x)
+    "Compute the square of a number"
+    (* x x))
+#+END_SRC
+
+* Mapping
+   
+#+BEGIN_SRC emacs-lisp :results output :exports both
+  (print (mapcar #'square '(1 1 2 3 5 8)))
+  (print (mapcar #'(lambda (x) (* x x x)) '(1 2 3)))
+#+END_SRC
+
+#+RESULTS:
+: 
+: (1 1 4 9 25 64)
+: 
+: (1 8 27)
+
+
+* Cons lists
+
+:    5                   42
+:    ^                   ^
+:    |                   |
+: +-----------+       +-----------+
+: | car | cdr | --->  | car | NIL |
+: +-----------+       +-----------+
+
+In Lisp:
+
+#+BEGIN_SRC emacs-lisp :exports code :results silent
+  (cons 5 (cons 42 nil)
+  (5 . (42 . nil))
+  '(5 42)
+#+END_SRC
+
+* Quoting
+
+*Input*
+#+BEGIN_SRC emacs-lisp :exports code :results output
+  (setq foo 42)
+
+  (print  (+ 1 2))      ; 3
+
+  (print '(+ 1 2))      ; (+ 1 2)
+
+  (print ''(+ 1 2))     ; (quote (+ 1 2))
+
+  (print `(+ 1 2))      ; (+ 1 2)
+
+  (print `(+ 1 foo))    ; (+ 1 foo)
+
+  (print `(+ 1 ,foo))   ; (+ 1 42)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+3
+
+(+ 1 2)
+
+(quote (+ 1 2))
+
+(+ 1 2)
+
+(+ 1 foo)
+
+(+ 1 42)
+#+end_example
+
+* Macros
+
+#+BEGIN_SRC emacs-lisp :exports both :results output
+  (defmacro when* (condition then)
+    `(let ((it ,condition))
+       (when it ,then)))
+
+  (setq foo 42)
+  (when* foo (print it))
+#+END_SRC
+
+#+RESULTS:
+: 
+: 42
+
+* Built with macros
+
+  - Convenience shortcuts
+  - New programming constructs
+  - Abstractions
+  - Object systems
+
+* Anything else?
+  - Stable
+  - Structured editing
+  - Interactive programming
+  - Compiled /or/ interpreted
+  - Reader macros
+
+* Uses
+  Examples:
+  - Emacs
+  - ITA Software's search engine
+  - Grammarly's core engine
+  - Space and war machinery
+  - Axiom and Maxima CAS
+  - Clojure in wide use
+  - Programming language research
+
+* Thanks
+  #+CAPTION: Lisp
+  #+ATTR_HTML: :width 100%
+  #+ATTR_LATEX: :width \textwidth
+  [[file:lisp.jpg]]
+
+-----
+
+  #+CAPTION: With apologies to Robert Frost
+  #+ATTR_HTML: :height 95%
+  #+ATTR_LATEX: :width \textwidth
+  [[file:with_apologies_to_robert_frost.png]]
+
+#+BEGIN_notes
+Slightly proud that I worked with [[wp:Carolyn_Talcott][Carolyn Talcott]], McCarthy's third
+wife, during my time at SRI.
+#+END_notes
